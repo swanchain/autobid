@@ -1,0 +1,111 @@
+package models
+
+import (
+	"go-swan/common/constants"
+	"go-swan/database"
+	"go-swan/logs"
+)
+
+type Task struct {
+	ID             int     `json:"id"`
+	TaskName       string  `json:"task_name"`
+	Description    string  `json:"description"`
+	TaskFileName   string  `json:"task_file_name"`
+	CreatedOn      string  `json:"created_on"`
+	UserId         int     `json:"user_id"`
+	Status         string  `json:"status"`
+	Tags           string  `json:"tags"`
+	MinerId        *int    `json:"miner_id"`
+	Type           string  `json:"type"`
+	IsPublic       int     `json:"is_public"`
+	MinPrice       float64 `json:"min_price"`
+	MaxPrice       float64 `json:"max_price"`
+	ExpireDays     int     `json:"expire_days"`
+	Uuid           string  `json:"uuid"`
+	CuratedDataset string  `json:"curated_dataset"`
+	UpdatedOn      string  `json:"updated_on"`
+}
+
+func GetTasks(pageNum int, pageSize int, status string) ([]*Task, error) {
+	var tasks []*Task
+	err := database.GetDB().Where("Status=?", status).Offset(pageNum).Limit(pageSize).Find(&tasks).Error
+
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return tasks, nil
+}
+
+func GetAutoBidTasks(pageNum int, pageSize int, status string) ([]*Task, error) {
+	var tasks []*Task
+	err := database.GetDB().Where("miner_id is null and Status=?", status).Offset(pageNum).Limit(pageSize).Find(&tasks).Error
+
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return tasks, nil
+}
+
+func GetTaskById(id int) (*Task, error) {
+	var task Task
+	err := database.GetDB().Where("id=?", id).First(&task).Error
+
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return &task, nil
+}
+
+func AddTask(task *Task) error {
+	err := database.GetDB().Create(task).Error
+
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	return err
+}
+
+func TaskAssignMiner(taskId, minerId int) error {
+	taskInfo := make(map[string]interface{})
+	taskInfo["miner_id"] = minerId
+	taskInfo["status"] = constants.TASK_STATUS_ASSIGNED
+
+	err := database.GetDB().Model(&Task{}).Where("id=?", taskId).Update(taskInfo).Error
+
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	return err
+}
+
+func EditTask(task Task) error {
+	err := database.GetDB().Model(&Task{}).Where("id=?", task.ID).Update(task).Error
+
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	return err
+}
+
+func DeleteTask(id int) error {
+	err := database.GetDB().Where("id=?", id).Delete(Task{}).Error
+
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	return err
+}
