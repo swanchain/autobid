@@ -9,11 +9,11 @@ import (
 	"go-swan/database"
 	"go-swan/logs"
 	"go-swan/routers/commonRouters"
+	"go-swan/test"
 	"time"
 )
 
 func main() {
-
 	db := initMethod()
 
 	defer func() {
@@ -23,6 +23,12 @@ func main() {
 		}
 	}()
 
+	//service.FindMiner4AllTasks()
+
+	test.Test()
+}
+
+func createGinServer() {
 	r := gin.Default()
 	r.Use(cors.Middleware(cors.Config{
 		Origins:         "*",
@@ -41,7 +47,6 @@ func main() {
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
-
 }
 
 func initMethod() *gorm.DB {

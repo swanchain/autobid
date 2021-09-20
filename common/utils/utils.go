@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -10,6 +11,9 @@ import (
 	"io/ioutil"
 	"math/big"
 	"os"
+	"regexp"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -79,4 +83,93 @@ func GetFromAndToAddressByTxHash(client *ethclient.Client, chainID *big.Int, txH
 type addressInfo struct {
 	AddrFrom string
 	AddrTo   string
+}
+
+func ToJson(obj interface{}) (string, error) {
+	jsonBytes, err := json.Marshal(obj)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return "", err
+	}
+
+	jsonString := string(jsonBytes)
+	return jsonString, nil
+}
+
+func GetInt64FromStr(numStr string) int64 {
+	num, err := strconv.ParseInt(numStr, 10, 64)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return -1
+	}
+
+	return num
+}
+
+func GetFloat64FromStr(numStr string) (float64, error) {
+	if numStr == "" {
+		return -1, nil
+	}
+
+	num, err := strconv.ParseFloat(numStr, 64)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return -1, err
+	}
+
+	return num, nil
+}
+
+func GetIntFromStr(numStr string) (int, error) {
+	num, err := strconv.ParseInt(numStr, 10, 32)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return -1, err
+	}
+
+	return int(num), nil
+}
+
+func GetNumStrFromStr(numStr string) string {
+	re := regexp.MustCompile("[0-9]+.?[0-9]*")
+	words := re.FindAllString(numStr, -1)
+	logs.GetLogger().Info("words:", words)
+	if words != nil && len(words) > 0 {
+		return words[0]
+	}
+
+	return ""
+}
+
+func GetByteSizeFromStr(sizeStr string) float64 {
+	numStr := GetNumStrFromStr(sizeStr)
+	unit := strings.Trim(sizeStr, numStr)
+	unit = strings.Trim(unit, " ")
+	unit = strings.ToUpper(unit)
+	size, err := strconv.ParseFloat(numStr, 64)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return 0
+	}
+	switch unit {
+	case "GIB":
+		size = size * 1024 * 1024 * 1024
+	case "MIB":
+		size = size * 1024 * 1024
+	case "KIB":
+		size = size * 1024
+	}
+
+	return size
+}
+
+func IsSameDay(nanoSec1, nanoSec2 int64) bool {
+	year1, month1, day1 := time.Unix(0, nanoSec1).Date()
+	year2, month2, day2 := time.Unix(0, nanoSec2).Date()
+
+	if year1 == year2 && month1 == month2 && day1 == day2 {
+		return true
+	}
+
+	return false
 }
