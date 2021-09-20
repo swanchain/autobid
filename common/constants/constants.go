@@ -17,4 +17,13 @@ const (
 
 	URL_HOST_GET_COMMON    = "/common"
 	URL_HOST_GET_HOST_INFO = "/host/info"
+
+	TASK_STATUS_CREATED   = "Created"
+	TASK_STATUS_ASSIGNED  = "Assigned"
+	TASK_STATUS_CANCELLED = "Cancelled"
+	TASK_STATUS_CLOSED    = "Closed"
+	TASK_STATUS_COMPLETED = "Completed"
+	TASK_STATUS_EXPIRED   = "Expired"
+
+	MINER_STATUS_ACTIVE = "Active"
 )

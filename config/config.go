@@ -7,18 +7,19 @@ import (
 )
 
 type Configuration struct {
-	Port     string
-	Database database
-	Dev      bool
+	Port     string   `toml:"port"`
+	Dev      bool     `toml:"dev"`
+	Database database `toml:"database"`
 }
 
 type database struct {
-	DbUsername   string
-	DbPwd        string
-	DbHost       string
-	DbPort       string
-	DbSchemaName string
-	DbArgs       string
+	DbHost           string `toml:"db_host"`
+	DbPort           string `toml:"db_port"`
+	DbSchemaName     string `toml:"db_schema_name"`
+	DbUsername       string `toml:"db_username"`
+	DbPassword       string `toml:"db_password"`
+	DbArgs           string `toml:"db_args"`
+	DbMaxIdleConnNum int    `toml:"db_max_idle_conn_num"`
 }
 
 var config *Configuration
@@ -53,12 +54,16 @@ func GetConfigFromMainParams(configFile string) Configuration {
 func requiredFieldsAreGiven(metaData toml.MetaData) bool {
 	requiredFields := [][]string{
 		{"port"},
+		{"dev"},
+		{"database"},
 
-		{"DataBase", "dbHost"},
-		{"DataBase", "dbPort"},
-		{"DataBase", "dbSchemaName"},
-		{"DataBase", "dbUsername"},
-		{"DataBase", "dbPwd"},
+		{"database", "db_host"},
+		{"database", "db_port"},
+		{"database", "db_schema_name"},
+		{"database", "db_username"},
+		{"database", "db_password"},
+		{"database", "db_args"},
+		{"database", "db_max_idle_conn_num"},
 	}
 
 	for _, v := range requiredFields {
