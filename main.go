@@ -23,7 +23,7 @@ func main() {
 		}
 	}()
 
-	//service.FindMiner4AllTasks()
+	//go service.FindMiners()
 
 	test.Test()
 }

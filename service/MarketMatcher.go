@@ -3,6 +3,7 @@ package service
 import (
 	"go-swan/common/constants"
 	"go-swan/common/utils"
+	"go-swan/config"
 	"go-swan/logs"
 	"go-swan/models"
 	"math/rand"
@@ -11,39 +12,31 @@ import (
 
 var miners []*models.Miner = nil
 
+const DEFAULT_TASK_PAGE_SIZE = 100
+
 func FindMiners() {
-	go FindMiner4AllTasks()
+	for {
+		FindMiner4AllTasks()
+		time.Sleep(config.GetConfig().AutoBidIntervalSec * time.Second)
+	}
 }
 
 func FindMiner4AllTasks() {
-	for {
-		taskCntFilled := 0
-		for {
-			taskCntFilled1Time := FindMiner4Tasks()
-
-			taskCntFilled = taskCntFilled + taskCntFilled1Time
-
-			if taskCntFilled1Time > 0 {
-				logs.GetLogger().Info(taskCntFilled1Time, " auto bidding tasks are matched.")
-				continue
-			}
-
-			if taskCntFilled1Time == 0 {
-				logs.GetLogger().Info("All auto bidding tasks are matched.")
-				break
-			}
-		}
-
-		logs.GetLogger().Info(taskCntFilled, " auto bidding tasks are matched in total this time.")
-
-		for _, miner := range miners {
-			models.MinerUpdateLastAutoBidInfo(miner.Id, miner.AutoBidTaskCnt, miner.LastAutoBidAt)
-		}
-
-		miners = nil
-
-		time.Sleep(2 * time.Minute)
+	taskCntDealt := 0
+	var taskCntDealt1Time = DEFAULT_TASK_PAGE_SIZE
+	for taskCntDealt1Time >= DEFAULT_TASK_PAGE_SIZE {
+		taskCntDealt1Time = FindMiner4Tasks()
+		taskCntDealt = taskCntDealt + taskCntDealt1Time
+		logs.GetLogger().Info(taskCntDealt1Time, " auto bidding tasks are dealt.")
 	}
+
+	logs.GetLogger().Info(taskCntDealt, " auto bidding tasks are dealt in total this time.")
+
+	for _, miner := range miners {
+		models.MinerUpdateLastAutoBidInfo(miner.Id, miner.AutoBidTaskCnt, miner.LastAutoBidAt)
+	}
+
+	miners = nil
 }
 
 func FindMiner4Tasks() int {
@@ -188,12 +181,12 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 	return matchedMiners[len(matchedMiners)-1]
 }
 
-func GetMiners() int {
+func GetMiners() []*models.Miner {
 	var err error
 	miners, err = models.GetAllMinersOrderByScore(constants.MINER_STATUS_ACTIVE)
 	if err != nil {
 		logs.GetLogger().Error(err)
-		return 0
+		return nil
 	}
 
 	totalScore := 0
@@ -219,13 +212,11 @@ func GetMiners() int {
 		}
 	}
 
-	multiple := 1.0 / maxScorePercent
-
 	for _, miner := range miners {
 		//oldScorePercent := miner.ScorePercent
-		miner.ScorePercent = miner.ScorePercent * multiple
+		miner.ScorePercent = miner.ScorePercent / maxScorePercent
 		//fmt.Println(oldScorePercent,miner.Score, miner.ScorePercent)
 	}
 
-	return len(miners)
+	return miners
 }

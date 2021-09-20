@@ -4,12 +4,14 @@ import (
 	"github.com/BurntSushi/toml"
 	"log"
 	"strings"
+	"time"
 )
 
 type Configuration struct {
-	Port     string   `toml:"port"`
-	Dev      bool     `toml:"dev"`
-	Database database `toml:"database"`
+	Port               string        `toml:"port"`
+	Dev                bool          `toml:"dev"`
+	AutoBidIntervalSec time.Duration `toml:"auto_bid_interval_sec"`
+	Database           database      `toml:"database"`
 }
 
 type database struct {
@@ -55,6 +57,7 @@ func requiredFieldsAreGiven(metaData toml.MetaData) bool {
 	requiredFields := [][]string{
 		{"port"},
 		{"dev"},
+		{"auto_bid_interval_sec"},
 		{"database"},
 
 		{"database", "db_host"},

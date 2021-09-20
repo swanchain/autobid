@@ -13,8 +13,8 @@ import (
 func Test() {
 	//TestTask_GetTasks()
 	//TestTask_GetAutoBidTasks()
-	//TestMiner_GetAllMiners()
-	service.FindMiner4AllTasks()
+	TestMiner_GetAllMiners()
+	//service.FindMiner4AllTasks()
 	//models.MinerUpdateLastAutoBidInfo(726, 19, time.Now().UnixNano())
 	//models.TaskAssignMiner(1389, 14)
 }
@@ -66,46 +66,7 @@ func TestMiner_GetMiners() {
 }
 
 func TestMiner_GetAllMiners() {
-	miners, err := models.GetAllMinersOrderByScore(constants.MINER_STATUS_ACTIVE)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
-	totalScore := 0
-
-	for _, miner := range miners {
-		totalScore = totalScore + miner.Score
-		//logs.GetLogger().Info(utils.ToJson(miner))
-		//logs.GetLogger().Info("Score:", miner.Score, rand.Float64())
-	}
-
-	var minScorePercent float64 = 1
-	var maxScorePercent float64 = 0
-
-	for _, miner := range miners {
-		miner.ScorePercent = float64(miner.Score) / float64(totalScore)
-		if miner.ScorePercent < minScorePercent {
-			minScorePercent = miner.ScorePercent
-		}
-
-		if miner.ScorePercent > maxScorePercent {
-			maxScorePercent = miner.ScorePercent
-		}
-		//fmt.Println(miner.ScorePercent)
-		//logs.GetLogger().Info(utils.ToJson(miner))
-		//logs.GetLogger().Info("Score:", miner.Score, rand.Float64())
-	}
-
-	multiple := 1.0 / maxScorePercent
-
-	for _, miner := range miners {
-		oldScorePercent := miner.ScorePercent
-		miner.ScorePercent = miner.ScorePercent * multiple
-		fmt.Println(oldScorePercent, miner.Score, miner.ScorePercent)
-	}
-
-	fmt.Println(minScorePercent, maxScorePercent, multiple)
+	miners := service.GetMiners()
 
 	for j := 0; j < 100; j++ {
 		ratio := rand.ExpFloat64()
