@@ -102,7 +102,12 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 
 		minerMatch := true
 		for _, offlineDeal := range offlineDeals {
-			fileSize := utils.GetFloat64FromStr(offlineDeal.FileSize)
+			fileSize, err := utils.GetFloat64FromStr(offlineDeal.FileSize)
+			if err != nil {
+				logs.GetLogger().Error(err)
+				return nil
+			}
+
 			if fileSize < 0 {
 				return nil
 			}

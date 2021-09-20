@@ -85,15 +85,15 @@ type addressInfo struct {
 	AddrTo   string
 }
 
-func ToJson(obj interface{}) string {
+func ToJson(obj interface{}) (string, error) {
 	jsonBytes, err := json.Marshal(obj)
 	if err != nil {
 		logs.GetLogger().Error(err)
-		return ""
+		return "", err
 	}
 
 	jsonString := string(jsonBytes)
-	return jsonString
+	return jsonString, nil
 }
 
 func GetInt64FromStr(numStr string) int64 {
@@ -106,28 +106,28 @@ func GetInt64FromStr(numStr string) int64 {
 	return num
 }
 
-func GetFloat64FromStr(numStr string) float64 {
+func GetFloat64FromStr(numStr string) (float64, error) {
 	if numStr == "" {
-		return -1
+		return -1, nil
 	}
 
 	num, err := strconv.ParseFloat(numStr, 64)
 	if err != nil {
 		logs.GetLogger().Error(err)
-		return -1
+		return -1, err
 	}
 
-	return num
+	return num, nil
 }
 
-func GetIntFromStr(numStr string) int {
+func GetIntFromStr(numStr string) (int, error) {
 	num, err := strconv.ParseInt(numStr, 10, 32)
 	if err != nil {
 		logs.GetLogger().Error(err)
-		return -1
+		return -1, err
 	}
 
-	return int(num)
+	return int(num), nil
 }
 
 func GetNumStrFromStr(numStr string) string {
