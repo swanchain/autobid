@@ -7,23 +7,23 @@ import (
 )
 
 type Task struct {
-	ID             int     `json:"id"`
-	TaskName       string  `json:"task_name"`
-	Description    string  `json:"description"`
-	TaskFileName   string  `json:"task_file_name"`
-	CreatedOn      string  `json:"created_on"`
-	UserId         int     `json:"user_id"`
-	Status         string  `json:"status"`
-	Tags           string  `json:"tags"`
-	MinerId        *int    `json:"miner_id"`
-	Type           string  `json:"type"`
-	IsPublic       int     `json:"is_public"`
-	MinPrice       float64 `json:"min_price"`
-	MaxPrice       float64 `json:"max_price"`
-	ExpireDays     int     `json:"expire_days"`
-	Uuid           string  `json:"uuid"`
-	CuratedDataset string  `json:"curated_dataset"`
-	UpdatedOn      string  `json:"updated_on"`
+	ID             int      `json:"id"`
+	TaskName       string   `json:"task_name"`
+	Description    string   `json:"description"`
+	TaskFileName   string   `json:"task_file_name"`
+	CreatedOn      string   `json:"created_on"`
+	UserId         int      `json:"user_id"`
+	Status         string   `json:"status"`
+	Tags           string   `json:"tags"`
+	MinerId        *int     `json:"miner_id"`
+	Type           string   `json:"type"`
+	IsPublic       int      `json:"is_public"`
+	MinPrice       *float64 `json:"min_price"`
+	MaxPrice       *float64 `json:"max_price"`
+	ExpireDays     int      `json:"expire_days"`
+	Uuid           string   `json:"uuid"`
+	CuratedDataset string   `json:"curated_dataset"`
+	UpdatedOn      string   `json:"updated_on"`
 }
 
 func GetTasks(pageNum int, pageSize int, status string) ([]*Task, error) {
@@ -77,6 +77,20 @@ func TaskAssignMiner(taskId, minerId int) error {
 	taskInfo := make(map[string]interface{})
 	taskInfo["miner_id"] = minerId
 	taskInfo["status"] = constants.TASK_STATUS_ASSIGNED
+
+	err := database.GetDB().Model(&Task{}).Where("id=?", taskId).Update(taskInfo).Error
+
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	return err
+}
+
+func TaskUpdateStatus(taskId int, status string) error {
+	taskInfo := make(map[string]interface{})
+	taskInfo["status"] = status
 
 	err := database.GetDB().Model(&Task{}).Where("id=?", taskId).Update(taskInfo).Error
 

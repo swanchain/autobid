@@ -17,7 +17,7 @@ type OfflineDeals struct {
 	Status               string `json:"status"`
 	MinerId              int    `json:"miner_id"`
 	Md5Local             string `json:"md5_local"`
-	StartEpoch           int    `json:"start_epoch"`
+	StartEpoch           *int   `json:"start_epoch"`
 	FileDownloadedStatus string `json:"file_downloaded_status"`
 	UserId               int    `json:"user_id"`
 	Note                 string `json:"note"`

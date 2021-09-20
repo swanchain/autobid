@@ -27,6 +27,8 @@ type Miner struct {
 	SectorFaultyCount      int     `json:"sector_faulty_count"`
 	SectorActiveCount      int     `json:"sector_active_count"`
 	BidMode                int     `json:"bid_mode"`
+	StartEpoch             int     `json:"start_epoch"`
+	AddressBalance         float64 `json:"address_balance"`
 	AutoBidTaskPerDay      int     `json:"auto_bid_task_per_day"`
 	AutoBidTaskCnt         int     `json:"auto_bid_task_cnt"`
 	LastAutoBidAt          int64   `json:"last_auto_bid_at"` //millisecond of last auto-bid task for this miner
@@ -59,11 +61,11 @@ func GetAllMinersOrderByScore(status string) ([]*Miner, error) {
 	return miners, nil
 }
 
-func MinerUpdateLastAutoBidInfo(miner *Miner) error {
+func MinerUpdateLastAutoBidInfo(minerId, autoBidTaskCnt int, lastAutoBidAt int64) error {
 	lastAutoBidInfo := make(map[string]interface{})
-	lastAutoBidInfo["auto_bid_task_cnt"] = miner.AutoBidTaskCnt
-	lastAutoBidInfo["last_auto_bid_at"] = miner.LastAutoBidAt
-	err := database.GetDB().Model(Miner{}).Where("id=?", miner.Id).Update(lastAutoBidInfo).Error
+	lastAutoBidInfo["auto_bid_task_cnt"] = autoBidTaskCnt
+	lastAutoBidInfo["last_auto_bid_at"] = lastAutoBidAt
+	err := database.GetDB().Model(Miner{}).Where("id=?", minerId).Update(lastAutoBidInfo).Error
 
 	if err != nil {
 		logs.GetLogger().Error(err)

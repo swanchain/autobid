@@ -6,6 +6,7 @@ import (
 	"go-swan/common/utils"
 	"go-swan/logs"
 	"go-swan/models"
+	"go-swan/service"
 	"math/rand"
 )
 
@@ -13,7 +14,9 @@ func Test() {
 	//TestTask_GetTasks()
 	//TestTask_GetAutoBidTasks()
 	//TestMiner_GetAllMiners()
-	models.TaskAssignMiner(1389, 14)
+	service.FindMiner4AllTasks()
+	//models.MinerUpdateLastAutoBidInfo(726, 19, time.Now().UnixNano())
+	//models.TaskAssignMiner(1389, 14)
 }
 
 func TestTask_GetTasks() {

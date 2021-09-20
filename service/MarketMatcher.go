@@ -37,7 +37,7 @@ func FindMiner4AllTasks() {
 		logs.GetLogger().Info(taskCntFilled, " auto bidding tasks are matched in total this time.")
 
 		for _, miner := range miners {
-			models.MinerUpdateLastAutoBidInfo(miner)
+			models.MinerUpdateLastAutoBidInfo(miner.Id, miner.AutoBidTaskCnt, miner.LastAutoBidAt)
 		}
 
 		miners = nil
@@ -73,7 +73,10 @@ func FindMiner4Tasks() int {
 			logs.GetLogger().Error("Did not find miner for task: ", task.TaskName, " id=", task.ID)
 			continue
 		}
-		models.TaskAssignMiner(task.ID, miner.Id)
+		err = models.TaskAssignMiner(task.ID, miner.Id)
+		if err != nil {
+			logs.GetLogger().Error(err)
+		}
 
 		currentNanoSec := time.Now().UnixNano()
 		if utils.IsSameDay(miner.LastAutoBidAt, currentNanoSec) {
@@ -88,10 +91,31 @@ func FindMiner4Tasks() int {
 }
 
 func FindMiner4OneTask(task *models.Task) *models.Miner {
+	if task.MaxPrice == nil {
+		err := models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_ACTION_REQUIRED)
+		if err != nil {
+			logs.GetLogger().Error(err)
+		}
+		return nil
+	}
+
 	var matchedMiners []*models.Miner
 
-	offlineDeals, _ := models.GetOfflineDealByTaskId(task.ID)
+	offlineDeals, err := models.GetOfflineDealByTaskId(task.ID)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		err = models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_AUTO_BID_FAILED)
+		if err != nil {
+			logs.GetLogger().Error(err)
+		}
+		return nil
+	}
+
 	if len(offlineDeals) == 0 {
+		err = models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_AUTO_BID_FAILED)
+		if err != nil {
+			logs.GetLogger().Error(err)
+		}
 		return nil
 	}
 
@@ -102,16 +126,32 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 
 		minerMatch := true
 		for _, offlineDeal := range offlineDeals {
-			fileSize, err := utils.GetFloat64FromStr(offlineDeal.FileSize)
+			var fileSize float64
+			fileSize, err = utils.GetFloat64FromStr(offlineDeal.FileSize)
 			if err != nil {
 				logs.GetLogger().Error(err)
+				err = models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_ACTION_REQUIRED)
+				if err != nil {
+					logs.GetLogger().Error(err)
+				}
 				return nil
 			}
 
 			if fileSize < 0 {
+				logs.GetLogger().Error("DealCid:", offlineDeal.DealCid, " no valid file size")
+				err = models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_ACTION_REQUIRED)
+				if err != nil {
+					logs.GetLogger().Error(err)
+				}
 				return nil
 			}
+
 			if fileSize < miner.ByteSizeMin || fileSize > miner.ByteSizeMax {
+				minerMatch = false
+				break
+			}
+
+			if offlineDeal.StartEpoch != nil && *offlineDeal.StartEpoch <= miner.StartEpoch {
 				minerMatch = false
 				break
 			}
@@ -121,7 +161,7 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 			continue
 		}
 
-		if !(miner.Price < task.MaxPrice || miner.VerifiedPrice < task.MaxPrice) {
+		if !(miner.Price < *task.MaxPrice || miner.VerifiedPrice < *task.MaxPrice) {
 			continue
 		}
 
@@ -129,19 +169,23 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 	}
 
 	if len(matchedMiners) == 0 {
+		err = models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_AUTO_BID_FAILED)
+		if err != nil {
+			logs.GetLogger().Error(err)
+		}
 		return nil
 	}
 
-	ratio := rand.Float64()
+	ratio := rand.ExpFloat64()
 	for _, matchedMiner := range matchedMiners {
 		if ratio < matchedMiner.ScorePercent {
 			logs.GetLogger().Info(matchedMiner.Id, " ScorePercent=", matchedMiner.ScorePercent, " MinerFid=", matchedMiner.MinerFid, " ratio=", ratio, " is selected")
 			return matchedMiner
 		}
-		logs.GetLogger().Info(ratio)
+		//logs.GetLogger().Info(ratio)
 	}
 
-	return nil
+	return matchedMiners[len(matchedMiners)-1]
 }
 
 func GetMiners() int {

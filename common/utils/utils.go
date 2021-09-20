@@ -133,7 +133,7 @@ func GetIntFromStr(numStr string) (int, error) {
 func GetNumStrFromStr(numStr string) string {
 	re := regexp.MustCompile("[0-9]+.?[0-9]*")
 	words := re.FindAllString(numStr, -1)
-	logs.GetLogger().Info("words:", words)
+	//logs.GetLogger().Info("words:", words)
 	if words != nil && len(words) > 0 {
 		return words[0]
 	}
