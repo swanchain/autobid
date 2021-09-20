@@ -68,8 +68,9 @@ func TestMiner_GetMiners() {
 func TestMiner_GetAllMiners() {
 	miners := service.GetMiners()
 
+	maxRand := 1e10
 	for j := 0; j < 100; j++ {
-		ratio := rand.ExpFloat64()
+		ratio := float64(rand.Int63n(int64(maxRand))) / maxRand
 		for i, miner := range miners {
 			//score := miner.ScorePercent * multiple
 			//logs.GetLogger().Info("Score:", ratio, randNum)
