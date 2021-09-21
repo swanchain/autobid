@@ -8,8 +8,9 @@ import (
 	"go-swan/config"
 	"go-swan/database"
 	"go-swan/logs"
+	"go-swan/routers"
 	"go-swan/routers/commonRouters"
-	"go-swan/test"
+	"go-swan/service"
 	"time"
 )
 
@@ -23,9 +24,10 @@ func main() {
 		}
 	}()
 
-	//go service.FindMiners()
+	createGinServer()
+	go service.FindMiners()
 
-	test.Test()
+	//test.Test()
 }
 
 func createGinServer() {
@@ -42,7 +44,7 @@ func createGinServer() {
 
 	v1 := r.Group("/api/v1")
 	commonRouters.HostManager(v1.Group(constants.URL_HOST_GET_COMMON))
-
+	v1.GET("/healthCheck", routers.GetSystemTime)
 	err := r.Run(":" + config.GetConfig().Port)
 	if err != nil {
 		logs.GetLogger().Fatal(err)

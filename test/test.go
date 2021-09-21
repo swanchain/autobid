@@ -7,16 +7,19 @@ import (
 	"go-swan/logs"
 	"go-swan/models"
 	"go-swan/service"
-	"math/rand"
 )
 
 func Test() {
 	//TestTask_GetTasks()
 	//TestTask_GetAutoBidTasks()
 	//TestMiner_GetAllMiners()
-	//service.FindMiner4AllTasks()
+	service.FindMiner4AllTasks()
 	//models.MinerUpdateLastAutoBidInfo(726, 19, time.Now().UnixNano())
 	//models.TaskAssignMiner(1389, 14)
+	fmt.Println("hello")
+}
+
+func testRandomInt() {
 	cnt5 := 0
 	cnt6 := 0
 	cnt7 := 0
@@ -96,14 +99,13 @@ func TestMiner_GetMiners() {
 func TestMiner_GetAllMiners() {
 	miners := service.GetMiners()
 
-	maxRand := 1e10
 	for j := 0; j < 100; j++ {
-		ratio := float64(rand.Int63n(int64(maxRand))) / maxRand
+		ratio := utils.GetRandInRange(0, 100)
 		for i, miner := range miners {
 			//score := miner.ScorePercent * multiple
 			//logs.GetLogger().Info("Score:", ratio, randNum)
-			if ratio < miner.ScorePercent {
-				fmt.Println(i, " ScorePercent=", miner.ScorePercent, " MinerFid=", miner.MinerFid, " ratio=", ratio, " is selected")
+			if ratio < miner.Score {
+				fmt.Println(i, " ScorePercent=", miner.Score, " MinerFid=", miner.MinerFid, " ratio=", ratio, " is selected")
 				break
 			}
 		}

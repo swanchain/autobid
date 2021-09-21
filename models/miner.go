@@ -32,7 +32,6 @@ type Miner struct {
 	AutoBidTaskPerDay      int     `json:"auto_bid_task_per_day"`
 	AutoBidTaskCnt         int     `json:"auto_bid_task_cnt"`
 	LastAutoBidAt          int64   `json:"last_auto_bid_at"` //millisecond of last auto-bid task for this miner
-	ScorePercent           float64
 	ByteSizeMin            float64
 	ByteSizeMax            float64
 }

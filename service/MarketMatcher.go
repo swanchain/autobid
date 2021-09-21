@@ -24,21 +24,20 @@ const DEFAULT_TASK_PAGE_SIZE = 100
 
 func FindMiners() {
 	for {
-		miners = nil
-		minScore = 100
-		maxScore = 0
-		for i := 0; i < len(minerStat); i++ {
-			minerStat[i] = nil
-		}
-
-		GetMiners()
-
 		FindMiner4AllTasks()
 		time.Sleep(config.GetConfig().AutoBidIntervalSec * time.Second)
 	}
 }
 
 func FindMiner4AllTasks() {
+	miners = nil
+	minScore = 100
+	maxScore = 0
+	for i := 0; i < len(minerStat); i++ {
+		minerStat[i] = nil
+	}
+	GetMiners()
+
 	taskCntDealt := 0
 
 	for taskCntDealt1Time := DEFAULT_TASK_PAGE_SIZE; taskCntDealt1Time >= DEFAULT_TASK_PAGE_SIZE; {
@@ -47,11 +46,11 @@ func FindMiner4AllTasks() {
 		logs.GetLogger().Info(taskCntDealt1Time, " auto bidding tasks are dealt.")
 	}
 
-	logs.GetLogger().Info(taskCntDealt, " auto bidding tasks are dealt in total this time.")
-
-	for _, miner := range miners {
+	/*	for _, miner := range miners {
 		models.MinerUpdateLastAutoBidInfo(miner.Id, miner.AutoBidTaskCnt, miner.LastAutoBidAt)
-	}
+	}*/
+
+	logs.GetLogger().Info(taskCntDealt, " auto bidding tasks are dealt in total this time.")
 }
 
 func FindMiner4Tasks() int {
@@ -90,6 +89,7 @@ func FindMiner4Tasks() int {
 			miner.AutoBidTaskCnt = 1
 		}
 		miner.LastAutoBidAt = currentNanoSec
+		models.MinerUpdateLastAutoBidInfo(miner.Id, miner.AutoBidTaskCnt, miner.LastAutoBidAt)
 	}
 
 	return len(tasks)
@@ -177,6 +177,10 @@ func SelectMiner(task *models.Task, offlineDeals []*models.OfflineDeals) *models
 }
 
 func GetMatchedMiner(score int, task *models.Task, offlineDeals []*models.OfflineDeals) *models.Miner {
+	if minerStat[score] == nil {
+		return nil
+	}
+
 	if minerStat[score].miners == nil {
 		return nil
 	}
@@ -259,6 +263,10 @@ func GetMiners() []*models.Miner {
 		if minerStat[miner.Score] == nil {
 			minerStat[miner.Score] = &MinerStat{}
 		}
+
+		miner.ByteSizeMin = utils.GetByteSizeFromStr(miner.MinPieceSize)
+		miner.ByteSizeMax = utils.GetByteSizeFromStr(miner.MaxPieceSize)
+
 		minerStat[miner.Score].miners = append(minerStat[miner.Score].miners, miner)
 		if miner.Score > maxScore {
 			maxScore = miner.Score
@@ -267,9 +275,6 @@ func GetMiners() []*models.Miner {
 		if miner.Score < minScore {
 			minScore = miner.Score
 		}
-
-		miner.ByteSizeMin = utils.GetByteSizeFromStr(miner.MinPieceSize)
-		miner.ByteSizeMax = utils.GetByteSizeFromStr(miner.MaxPieceSize)
 	}
 
 	return miners

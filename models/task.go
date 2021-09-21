@@ -40,7 +40,7 @@ func GetTasks(pageNum int, pageSize int, status string) ([]*Task, error) {
 
 func GetAutoBidTasks(pageNum int, pageSize int, status string) ([]*Task, error) {
 	var tasks []*Task
-	err := database.GetDB().Where("miner_id is null and Status=?", status).Offset(pageNum).Limit(pageSize).Find(&tasks).Error
+	err := database.GetDB().Where("bid_mode=1 and miner_id is null and Status=?", status).Offset(pageNum).Limit(pageSize).Find(&tasks).Error
 
 	if err != nil {
 		logs.GetLogger().Error(err)
