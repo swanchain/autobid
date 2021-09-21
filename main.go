@@ -23,8 +23,8 @@ func main() {
 		}
 	}()
 
-	createGinServer()
 	go service.FindMiners()
+	createGinServer()
 
 	//test.Test()
 }
