@@ -1,7 +1,6 @@
 package service
 
 import (
-	"errors"
 	"go-swan/common/constants"
 	"go-swan/common/utils"
 	"go-swan/config"
@@ -94,6 +93,16 @@ func FindMiner4Tasks() int {
 
 func FindMiner4OneTask(task *models.Task) *models.Miner {
 	if task.MaxPrice == nil {
+		logs.GetLogger().Error("Task:", task.TaskName, " no max price")
+		err := models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_ACTION_REQUIRED)
+		if err != nil {
+			logs.GetLogger().Error(err)
+		}
+		return nil
+	}
+
+	if task.FastRetrieval == nil {
+		logs.GetLogger().Error("Task:", task.TaskName, " no fast retrieval")
 		err := models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_ACTION_REQUIRED)
 		if err != nil {
 			logs.GetLogger().Error(err)
@@ -120,14 +129,13 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 	}
 
 	for _, offlineDeal := range offlineDeals {
-		offlineDeal.FileSizeNum, err = utils.GetFloat64FromStr(offlineDeal.FileSize)
+		offlineDeal.FileSizeNum, err = utils.GetFloat64FromStr(*offlineDeal.FileSize)
 		if err != nil {
 			logs.GetLogger().Error(err)
 			err = models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_ACTION_REQUIRED)
 			if err != nil {
 				logs.GetLogger().Error(err)
 			}
-			err = errors.New("file size invalid, deal cid: " + offlineDeal.DealCid)
 			return nil
 		}
 
@@ -137,7 +145,42 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 			if err != nil {
 				logs.GetLogger().Error(err)
 			}
-			err = errors.New("file size invalid, deal cid: " + offlineDeal.DealCid)
+			return nil
+		}
+
+		if utils.IsStrEmpty(offlineDeal.FileSourceUrl) {
+			logs.GetLogger().Error("DealCid:", offlineDeal.DealCid, " no file source url")
+			err = models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_ACTION_REQUIRED)
+			if err != nil {
+				logs.GetLogger().Error(err)
+			}
+			return nil
+		}
+
+		if offlineDeal.StartEpoch == nil {
+			logs.GetLogger().Error("DealCid:", offlineDeal.DealCid, " no StartEpoch")
+			err = models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_ACTION_REQUIRED)
+			if err != nil {
+				logs.GetLogger().Error(err)
+			}
+			return nil
+		}
+
+		if utils.IsStrEmpty(offlineDeal.PayloadCid) {
+			logs.GetLogger().Error("DealCid:", offlineDeal.DealCid, " no payload cid")
+			err = models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_ACTION_REQUIRED)
+			if err != nil {
+				logs.GetLogger().Error(err)
+			}
+			return nil
+		}
+
+		if utils.IsStrEmpty(offlineDeal.PieceCid) {
+			logs.GetLogger().Error("DealCid:", offlineDeal.DealCid, " no piece cid")
+			err = models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_ACTION_REQUIRED)
+			if err != nil {
+				logs.GetLogger().Error(err)
+			}
 			return nil
 		}
 	}

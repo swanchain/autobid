@@ -7,16 +7,33 @@ import (
 	"go-swan/logs"
 	"go-swan/models"
 	"go-swan/service"
+	"math/rand"
 )
 
 func Test() {
 	//TestTask_GetTasks()
 	//TestTask_GetAutoBidTasks()
 	//TestMiner_GetAllMiners()
-	service.FindMiner4AllTasks()
+	//service.FindMiner4AllTasks()
 	//models.MinerUpdateLastAutoBidInfo(726, 19, time.Now().UnixNano())
 	//models.TaskAssignMiner(1389, 14)
+	testRandomInt1()
 	fmt.Println("hello")
+}
+
+func testRandomInt1() {
+	var stat [11]int
+	for i := 0; i < 10; i++ {
+		val := (rand.Float64()-rand.Float64())*(1+10-5) + 5
+		valInt := int(val)
+		stat[valInt]++
+		fmt.Println(val, valInt)
+	}
+
+	for x := range stat {
+		fmt.Println(x, stat[x])
+	}
+	//fmt.Println(cnt5, cnt6, cnt7, cnt8, cnt9, cnt10, cntOther)
 }
 
 func testRandomInt() {

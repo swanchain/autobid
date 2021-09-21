@@ -180,3 +180,16 @@ func GetRandInRange(min, max int) int {
 	randVal := min + rand.Intn(max-min+1)
 	return randVal
 }
+
+func IsStrEmpty(str *string) bool {
+	if str == nil {
+		return true
+	}
+
+	strTrim := strings.Trim(*str, " ")
+	if len(strTrim) == 0 {
+		return true
+	}
+
+	return false
+}

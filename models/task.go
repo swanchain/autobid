@@ -25,6 +25,8 @@ type Task struct {
 	Uuid           string   `json:"uuid"`
 	CuratedDataset string   `json:"curated_dataset"`
 	UpdatedOn      string   `json:"updated_on"`
+	BidMode        *int     `json:"bid_mode"`
+	FastRetrieval  *int     `json:"fast_retrieval"`
 }
 
 func GetTasks(pageNum int, pageSize int, status string) ([]*Task, error) {
