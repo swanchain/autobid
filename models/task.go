@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"go-swan/common/constants"
 	"go-swan/database"
 	"go-swan/logs"
@@ -73,19 +74,41 @@ func AddTask(task *Task) error {
 	return err
 }
 
-func TaskAssignMiner(taskId, minerId int) error {
+func TaskAssignMiner(taskId, minerId, autoBidTaskCnt int, lastAutoBidAt int64) error {
 	taskInfo := make(map[string]interface{})
 	taskInfo["miner_id"] = minerId
 	taskInfo["status"] = constants.TASK_STATUS_ASSIGNED
 
-	err := database.GetDB().Model(&Task{}).Where("id=?", taskId).Update(taskInfo).Error
+	lastAutoBidInfo := make(map[string]interface{})
+	lastAutoBidInfo["auto_bid_task_cnt"] = autoBidTaskCnt
+	lastAutoBidInfo["last_auto_bid_at"] = lastAutoBidAt
 
+	ctx := context.Background()
+	db := database.GetDB().BeginTx(ctx, nil)
+
+	err := db.Model(&Task{}).Where("id=?", taskId).Update(taskInfo).Error
+	if err != nil {
+		db.Rollback()
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	err = db.Model(Miner{}).Where("id=?", minerId).Update(lastAutoBidInfo).Error
+	if err != nil {
+		db.Rollback()
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	err = db.Commit().Error
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return err
 	}
 
-	return err
+	logs.GetLogger().Info("updated")
+
+	return nil
 }
 
 func TaskUpdateStatus(taskId int, status string) error {

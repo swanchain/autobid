@@ -46,10 +46,6 @@ func FindMiner4AllTasks() {
 		logs.GetLogger().Info(taskCntDealt1Time, " auto bidding tasks are dealt.")
 	}
 
-	/*	for _, miner := range miners {
-		models.MinerUpdateLastAutoBidInfo(miner.Id, miner.AutoBidTaskCnt, miner.LastAutoBidAt)
-	}*/
-
 	logs.GetLogger().Info(taskCntDealt, " auto bidding tasks are dealt in total this time.")
 }
 
@@ -76,20 +72,21 @@ func FindMiner4Tasks() int {
 			logs.GetLogger().Error("Did not find miner for task: ", task.TaskName, " id=", task.ID)
 			continue
 		}
-		err = models.TaskAssignMiner(task.ID, miner.Id)
+
+		currentNanoSec := time.Now().UnixNano()
+		autoBidTaskCnt := 1
+		if utils.IsSameDay(miner.LastAutoBidAt, currentNanoSec) {
+			autoBidTaskCnt = miner.AutoBidTaskCnt + 1
+		}
+
+		err = models.TaskAssignMiner(task.ID, miner.Id, autoBidTaskCnt, currentNanoSec)
 		if err != nil {
 			logs.GetLogger().Error(err)
 			continue
 		}
 
-		currentNanoSec := time.Now().UnixNano()
-		if utils.IsSameDay(miner.LastAutoBidAt, currentNanoSec) {
-			miner.AutoBidTaskCnt = miner.AutoBidTaskCnt + 1
-		} else {
-			miner.AutoBidTaskCnt = 1
-		}
+		miner.AutoBidTaskCnt = autoBidTaskCnt
 		miner.LastAutoBidAt = currentNanoSec
-		models.MinerUpdateLastAutoBidInfo(miner.Id, miner.AutoBidTaskCnt, miner.LastAutoBidAt)
 	}
 
 	return len(tasks)
