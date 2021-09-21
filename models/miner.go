@@ -50,7 +50,7 @@ func GetMiners(pageNum int, pageSize int, status string) ([]*Miner, error) {
 
 func GetAllMinersOrderByScore(status string) ([]*Miner, error) {
 	var miners []*Miner
-	err := database.GetDB().Where("Status=?", status).Order("Score").Find(&miners).Error
+	err := database.GetDB().Where("bid_mode=1 and Status=?", status).Order("Score").Find(&miners).Error
 
 	if err != nil {
 		logs.GetLogger().Error(err)

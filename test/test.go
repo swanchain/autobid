@@ -17,8 +17,25 @@ func Test() {
 	//service.FindMiner4AllTasks()
 	//models.MinerUpdateLastAutoBidInfo(726, 19, time.Now().UnixNano())
 	//models.TaskAssignMiner(1389, 14)
-	testRandomInt1()
+	testRandomInt2()
 	fmt.Println("hello")
+}
+
+func testRandomInt2() {
+	var stat [160]int
+	for i := 0; i < 100; i++ {
+		val := float64(rand.Intn(100)) * 1.5
+		valInt := int(val)
+		stat[valInt]++
+		fmt.Println(val, valInt)
+	}
+
+	for x := range stat {
+		if stat[x] != 0 {
+			fmt.Println(x, stat[x])
+		}
+	}
+	//fmt.Println(cnt5, cnt6, cnt7, cnt8, cnt9, cnt10, cntOther)
 }
 
 func testRandomInt1() {

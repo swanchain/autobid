@@ -113,7 +113,7 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 	offlineDeals, err := models.GetOfflineDealByTaskId(task.Id)
 	if err != nil {
 		logs.GetLogger().Error(err)
-		err = models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_AUTO_BID_FAILED)
+		err = models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_ACTION_REQUIRED)
 		if err != nil {
 			logs.GetLogger().Error(err)
 		}
@@ -121,7 +121,7 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 	}
 
 	if len(offlineDeals) == 0 {
-		err = models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_AUTO_BID_FAILED)
+		err = models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_ACTION_REQUIRED)
 		if err != nil {
 			logs.GetLogger().Error(err)
 		}
@@ -129,7 +129,7 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 	}
 
 	for _, offlineDeal := range offlineDeals {
-		offlineDeal.FileSizeNum, err = utils.GetFloat64FromStr(*offlineDeal.FileSize)
+		offlineDeal.FileSizeNum, err = utils.GetFloat64FromStr(offlineDeal.FileSize)
 		if err != nil {
 			logs.GetLogger().Error(err)
 			err = models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_ACTION_REQUIRED)

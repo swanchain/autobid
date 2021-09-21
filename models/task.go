@@ -5,6 +5,8 @@ import (
 	"go-swan/common/constants"
 	"go-swan/database"
 	"go-swan/logs"
+	"strconv"
+	"time"
 )
 
 type Task struct {
@@ -77,13 +79,17 @@ func AddTask(task *Task) error {
 }
 
 func TaskAssignMiner(taskId, minerId, autoBidTaskCnt int, lastAutoBidAt int64) error {
+	milliSec := strconv.Itoa(int(time.Now().UnixNano() / 1e9))
+
 	taskInfo := make(map[string]interface{})
 	taskInfo["miner_id"] = minerId
 	taskInfo["status"] = constants.TASK_STATUS_ASSIGNED
+	taskInfo["updated_on"] = milliSec
 
 	lastAutoBidInfo := make(map[string]interface{})
 	lastAutoBidInfo["auto_bid_task_cnt"] = autoBidTaskCnt
 	lastAutoBidInfo["last_auto_bid_at"] = lastAutoBidAt
+	lastAutoBidInfo["update_time_str"] = milliSec
 
 	ctx := context.Background()
 	db := database.GetDB().BeginTx(ctx, nil)

@@ -53,11 +53,11 @@ retry:
 	rp, err := client.TransactionReceipt(context.Background(), tx.Hash())
 	if err != nil {
 		if err == ethereum.NotFound {
-			logs.GetLogger().Error("tx %v not found, check it later", tx.Hash().String())
+			logs.GetLogger().Error("tx ", tx.Hash().String(), " not found, check it later")
 			time.Sleep(1 * time.Second)
 			goto retry
 		} else {
-			logs.GetLogger().Error("TransactionReceipt fail: %s", err)
+			logs.GetLogger().Error("TransactionReceipt fail: ", err)
 			return nil, err
 		}
 	}
@@ -107,12 +107,17 @@ func GetInt64FromStr(numStr string) int64 {
 	return num
 }
 
-func GetFloat64FromStr(numStr string) (float64, error) {
-	if numStr == "" {
+func GetFloat64FromStr(numStr *string) (float64, error) {
+	if numStr == nil || *numStr == "" {
 		return -1, nil
 	}
 
-	num, err := strconv.ParseFloat(numStr, 64)
+	*numStr = strings.Trim(*numStr, " ")
+	if *numStr == "" {
+		return -1, nil
+	}
+
+	num, err := strconv.ParseFloat(*numStr, 64)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return -1, err
@@ -182,7 +187,7 @@ func GetRandInRange(min, max int) int {
 }
 
 func IsStrEmpty(str *string) bool {
-	if str == nil {
+	if str == nil || *str == "" {
 		return true
 	}
 

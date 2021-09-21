@@ -22,7 +22,6 @@ const (
 	TASK_STATUS_CREATED         = "Created"
 	TASK_STATUS_ASSIGNED        = "Assigned"
 	TASK_STATUS_ACTION_REQUIRED = "ActionRequired"
-	TASK_STATUS_AUTO_BID_FAILED = "AutoBidFailed"
 	TASK_STATUS_CANCELLED       = "Cancelled"
 	TASK_STATUS_CLOSED          = "Closed"
 	TASK_STATUS_COMPLETED       = "Completed"
