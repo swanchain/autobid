@@ -68,7 +68,7 @@ func FindMiner4Tasks() int {
 		miner := FindMiner4OneTask(task)
 
 		if miner == nil {
-			logs.GetLogger().Error("Did not find miner for task: ", task.TaskName, " id=", task.ID)
+			logs.GetLogger().Error("Did not find miner for task: ", task.TaskName, " id=", task.Id)
 			continue
 		}
 
@@ -78,7 +78,7 @@ func FindMiner4Tasks() int {
 			autoBidTaskCnt = miner.AutoBidTaskCnt + 1
 		}
 
-		err = models.TaskAssignMiner(task.ID, miner.Id, autoBidTaskCnt, currentNanoSec)
+		err = models.TaskAssignMiner(task.Id, miner.Id, autoBidTaskCnt, currentNanoSec)
 		if err != nil {
 			logs.GetLogger().Error(err)
 			continue
@@ -93,8 +93,8 @@ func FindMiner4Tasks() int {
 
 func FindMiner4OneTask(task *models.Task) *models.Miner {
 	if task.MaxPrice == nil {
-		logs.GetLogger().Error("Task:", task.TaskName, " no max price")
-		err := models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_ACTION_REQUIRED)
+		logs.GetLogger().Error("Task:", task.Id, " no max price")
+		err := models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_ACTION_REQUIRED)
 		if err != nil {
 			logs.GetLogger().Error(err)
 		}
@@ -102,18 +102,18 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 	}
 
 	if task.FastRetrieval == nil {
-		logs.GetLogger().Error("Task:", task.TaskName, " no fast retrieval")
-		err := models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_ACTION_REQUIRED)
+		logs.GetLogger().Error("Task:", task.Id, " no fast retrieval")
+		err := models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_ACTION_REQUIRED)
 		if err != nil {
 			logs.GetLogger().Error(err)
 		}
 		return nil
 	}
 
-	offlineDeals, err := models.GetOfflineDealByTaskId(task.ID)
+	offlineDeals, err := models.GetOfflineDealByTaskId(task.Id)
 	if err != nil {
 		logs.GetLogger().Error(err)
-		err = models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_AUTO_BID_FAILED)
+		err = models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_AUTO_BID_FAILED)
 		if err != nil {
 			logs.GetLogger().Error(err)
 		}
@@ -121,7 +121,7 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 	}
 
 	if len(offlineDeals) == 0 {
-		err = models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_AUTO_BID_FAILED)
+		err = models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_AUTO_BID_FAILED)
 		if err != nil {
 			logs.GetLogger().Error(err)
 		}
@@ -132,7 +132,7 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 		offlineDeal.FileSizeNum, err = utils.GetFloat64FromStr(*offlineDeal.FileSize)
 		if err != nil {
 			logs.GetLogger().Error(err)
-			err = models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_ACTION_REQUIRED)
+			err = models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_ACTION_REQUIRED)
 			if err != nil {
 				logs.GetLogger().Error(err)
 			}
@@ -140,8 +140,8 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 		}
 
 		if offlineDeal.FileSizeNum < 0 {
-			logs.GetLogger().Error("DealCid:", offlineDeal.DealCid, " no valid file size")
-			err = models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_ACTION_REQUIRED)
+			logs.GetLogger().Error("Deal:", offlineDeal.Id, " no valid file size")
+			err = models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_ACTION_REQUIRED)
 			if err != nil {
 				logs.GetLogger().Error(err)
 			}
@@ -149,8 +149,8 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 		}
 
 		if utils.IsStrEmpty(offlineDeal.FileSourceUrl) {
-			logs.GetLogger().Error("DealCid:", offlineDeal.DealCid, " no file source url")
-			err = models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_ACTION_REQUIRED)
+			logs.GetLogger().Error("Deal:", offlineDeal.Id, " no file source url")
+			err = models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_ACTION_REQUIRED)
 			if err != nil {
 				logs.GetLogger().Error(err)
 			}
@@ -158,8 +158,8 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 		}
 
 		if offlineDeal.StartEpoch == nil {
-			logs.GetLogger().Error("DealCid:", offlineDeal.DealCid, " no StartEpoch")
-			err = models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_ACTION_REQUIRED)
+			logs.GetLogger().Error("Deal:", offlineDeal.Id, " no StartEpoch")
+			err = models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_ACTION_REQUIRED)
 			if err != nil {
 				logs.GetLogger().Error(err)
 			}
@@ -167,8 +167,8 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 		}
 
 		if utils.IsStrEmpty(offlineDeal.PayloadCid) {
-			logs.GetLogger().Error("DealCid:", offlineDeal.DealCid, " no payload cid")
-			err = models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_ACTION_REQUIRED)
+			logs.GetLogger().Error("Deal:", offlineDeal.Id, " no payload cid")
+			err = models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_ACTION_REQUIRED)
 			if err != nil {
 				logs.GetLogger().Error(err)
 			}
@@ -176,8 +176,8 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 		}
 
 		if utils.IsStrEmpty(offlineDeal.PieceCid) {
-			logs.GetLogger().Error("DealCid:", offlineDeal.DealCid, " no piece cid")
-			err = models.TaskUpdateStatus(task.ID, constants.TASK_STATUS_ACTION_REQUIRED)
+			logs.GetLogger().Error("Deal:", offlineDeal.Id, " no piece cid")
+			err = models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_ACTION_REQUIRED)
 			if err != nil {
 				logs.GetLogger().Error(err)
 			}

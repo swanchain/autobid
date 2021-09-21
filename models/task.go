@@ -8,7 +8,7 @@ import (
 )
 
 type Task struct {
-	ID             int      `json:"id"`
+	Id             int      `json:"id"`
 	TaskName       string   `json:"task_name"`
 	Description    string   `json:"description"`
 	TaskFileName   string   `json:"task_file_name"`
@@ -128,7 +128,7 @@ func TaskUpdateStatus(taskId int, status string) error {
 }
 
 func EditTask(task Task) error {
-	err := database.GetDB().Model(&Task{}).Where("id=?", task.ID).Update(task).Error
+	err := database.GetDB().Model(&Task{}).Where("id=?", task.Id).Update(task).Error
 
 	if err != nil {
 		logs.GetLogger().Error(err)
