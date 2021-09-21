@@ -10,6 +10,7 @@ import (
 	"go-swan/logs"
 	"io/ioutil"
 	"math/big"
+	"math/rand"
 	"os"
 	"regexp"
 	"strconv"
@@ -172,4 +173,10 @@ func IsSameDay(nanoSec1, nanoSec2 int64) bool {
 	}
 
 	return false
+}
+
+func GetRandInRange(min, max int) int {
+	rand.Seed(time.Now().UnixNano())
+	randVal := min + rand.Intn(max-min+1)
+	return randVal
 }
