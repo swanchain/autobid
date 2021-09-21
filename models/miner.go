@@ -32,8 +32,8 @@ type Miner struct {
 	AutoBidTaskPerDay      int     `json:"auto_bid_task_per_day"`
 	AutoBidTaskCnt         int     `json:"auto_bid_task_cnt"`
 	LastAutoBidAt          int64   `json:"last_auto_bid_at"` //millisecond of last auto-bid task for this miner
-	ByteSizeMin            float64
-	ByteSizeMax            float64
+	MinPieceSizeByte       float64
+	MaxPieceSizeByte       float64
 }
 
 func GetMiners(pageNum int, pageSize int, status string) ([]*Miner, error) {

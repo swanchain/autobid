@@ -231,7 +231,7 @@ func IsMinerMatch(miner *models.Miner, task *models.Task, offlineDeals []*models
 	}
 
 	for _, offlineDeal := range offlineDeals {
-		if offlineDeal.FileSizeNum < miner.ByteSizeMin || offlineDeal.FileSizeNum > miner.ByteSizeMax {
+		if offlineDeal.FileSizeNum < miner.MinPieceSizeByte || offlineDeal.FileSizeNum > miner.MaxPieceSizeByte {
 			return false
 		}
 
@@ -264,8 +264,8 @@ func GetMiners() []*models.Miner {
 			minerStat[miner.Score] = &MinerStat{}
 		}
 
-		miner.ByteSizeMin = utils.GetByteSizeFromStr(miner.MinPieceSize)
-		miner.ByteSizeMax = utils.GetByteSizeFromStr(miner.MaxPieceSize)
+		miner.MinPieceSizeByte = utils.GetByteSizeFromStr(miner.MinPieceSize)
+		miner.MaxPieceSizeByte = utils.GetByteSizeFromStr(miner.MaxPieceSize)
 
 		minerStat[miner.Score].miners = append(minerStat[miner.Score].miners, miner)
 		if miner.Score > maxScore {
