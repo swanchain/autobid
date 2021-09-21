@@ -120,8 +120,10 @@ func TaskAssignMiner(taskId, minerId, autoBidTaskCnt int, lastAutoBidAt int64) e
 }
 
 func TaskUpdateStatus(taskId int, status string) error {
+	milliSec := strconv.Itoa(int(time.Now().UnixNano() / 1e9))
 	taskInfo := make(map[string]interface{})
 	taskInfo["status"] = status
+	taskInfo["updated_on"] = milliSec
 
 	err := database.GetDB().Model(&Task{}).Where("id=?", taskId).Update(taskInfo).Error
 
