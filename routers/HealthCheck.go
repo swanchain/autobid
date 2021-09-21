@@ -2,12 +2,13 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-swan/routers/response"
+	response2 "go-swan/common/response"
 	"net/http"
 	"time"
 )
 
 func GetSystemTime(c *gin.Context) {
-	appG := response.Gin{c}
-	appG.Reponse(http.StatusOK, response.SUCCESS, time.Now().UnixNano())
+	//c.JSON(http.StatusOK, common.CreateSuccessResponse(time.Now().UnixNano()))
+	appG := response2.Gin{c}
+	appG.Reponse(http.StatusOK, response2.SUCCESS, time.Now().UnixNano())
 }
