@@ -12,7 +12,7 @@ This swan tool listens to the tasks that come from Swan platform. It provides th
 - Database for swan platform.
 
 ## Config
-* ./config/config.toml.example *
+* ./config/config.toml.example
 ```shell
 port = "8888"
 dev = true
