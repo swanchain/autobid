@@ -45,12 +45,12 @@ make test    # Run unit tests
 make build   # generate binary file and config file
 ```
 
-### Step 3. Start Swan Provider
+### Step 3. Start Swan
 ```shell
 cd ./build/config
 vi ./config.toml   # fill valid configuration
 cd ./build
-nohup ./swan-provider > logs.txt &
+nohup ./go-swan > logs.txt &
 ```
 
 The deal status will be synchronized on the filwan.com, both client and miner will know the status changes in realtime.
