@@ -1,25 +1,56 @@
-# go-swan
+# Swan Guide
 
-# build executable bin file
+## Features:
 
-## for linux
+This swan tool listens to the tasks that come from Swan platform. It provides the following functions:
 
-GOOS=linux GOARCH=amd64 go build -v ./
+* It selects a suitable auto-bid miner for an auto-bid task. 
+* If an auto-bid miner is selected for an auto-bid task, the task status will be set to Assigned, otherwise, ActionRequired.
+* Synchronize deal status with Swan platform so that client will know the status changes in realtime.
 
-## for mac
+## Prerequisite
+- Database for swan platform.
 
-env GOOS=darwin GOARCH=amd64 go build -v ./
+## Config
+** ./config/config.toml.example **
+```shell
+port = "8888"
+dev = true
+auto_bid_interval_sec = 120 #auto bid interval, unit:second
 
-# put the bin file to destination
+[database]
+db_host = "192.168.88.188"
+db_port = "3306"
+db_schema_name = "sr2"
+db_username = "root"
+db_password = ""
+db_args = "charset=utf8mb4&parseTime=True&loc=Local"
+db_max_idle_conn_num = 10
+```
+## How to use
 
-# create config folder
-in the same directory as the bin file
+### Step 1. Download code
+```shell
+mkdir go-swan
+git clone git@192.168.88.183:NebulaAI-BlockChain/go-swan.git
+git checkout dev
+```
 
-# put config.toml.example under config folder
-# and rename it to config.toml
-the source file is:
-go-swan-provider/config/config.toml.example
+### Step 2. Compile Provider
+```shell
+make help    # view how to use make tool
+make clean   # remove generated binary file and config file
+make dep     # Get dependencies
+make test    # Run unit tests
+make build   # generate binary file and config file
+```
 
-# edit config.toml with right values
+### Step 3. Start Swan Provider
+```shell
+cd ./build/config
+vi ./config.toml   # fill valid configuration
+cd ./build
+nohup ./swan-provider > logs.txt &
+```
 
-
+The deal status will be synchronized on the filwan.com, both client and miner will know the status changes in realtime.
