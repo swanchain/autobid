@@ -50,7 +50,7 @@ make build   # generate binary file and config file
 cd ./build/config
 vi ./config.toml   # fill valid configuration
 cd ./build
-nohup ./go-swan > logs.txt &
+nohup ./go-swan > go-swan.log &
 ```
 
 The deal status will be synchronized on the filwan.com, both client and miner will know the status changes in realtime.
