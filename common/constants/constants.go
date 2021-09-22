@@ -1,6 +1,7 @@
 package constants
 
 const (
+	EPOCH_PER_HOUR        = 120
 	SWAN_PAYMENT_ABI_JSON = "on-chain/contracts/abi/SwanPayment.json"
 	DEFAULT_SELECT_LIMIT  = "100"
 

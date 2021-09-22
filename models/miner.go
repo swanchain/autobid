@@ -33,6 +33,7 @@ type Miner struct {
 	AutoBidTaskCnt         int      `json:"auto_bid_task_cnt"`
 	LastAutoBidAt          int64    `json:"last_auto_bid_at"` //millisecond of last auto-bid task for this miner
 	ExpectedSealingTime    *int     `json:"expected_sealing_time"`
+	StartEpochAbs          *int
 	MinPieceSizeByte       *float64
 	MaxPieceSizeByte       *float64
 }

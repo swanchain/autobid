@@ -230,3 +230,7 @@ func GetMinFloat64(val1, val2 *float64) *float64 {
 
 	return val2
 }
+
+func GetCurrentEpoch() int {
+	return (time.Now().Second() - 1598306471) / 30
+}

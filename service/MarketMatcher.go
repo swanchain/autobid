@@ -305,7 +305,7 @@ func IsMinerMatch(miner *models.Miner, task *models.Task, offlineDeals []*models
 			return false
 		}
 
-		if *offlineDeal.StartEpoch < *miner.StartEpoch {
+		if *offlineDeal.StartEpoch < *miner.StartEpochAbs {
 			return false
 		}
 	}
@@ -336,6 +336,10 @@ func GetMiners() []*models.Miner {
 
 		if miner.MaxPieceSize != nil {
 			miner.MaxPieceSizeByte = utils.GetByteSizeFromStr(*miner.MaxPieceSize)
+		}
+
+		if miner.StartEpoch != nil {
+			*miner.StartEpochAbs = utils.GetCurrentEpoch() + *miner.StartEpoch + constants.EPOCH_PER_HOUR
 		}
 
 		minerStat[miner.Score].miners = append(minerStat[miner.Score].miners, miner)
