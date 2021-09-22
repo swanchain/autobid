@@ -58,7 +58,7 @@ func GetAutoBidMinersOrderByScore(status string) ([]*Miner, error) {
 	notNulCols = append(notNulCols, "min_piece_size")
 	notNulCols = append(notNulCols, "max_piece_size")
 	notNulCols = append(notNulCols, "start_epoch")
-	filter := "bid_mode=1 and status=?"
+	filter := "bid_mode=1 and status=? and offline_deal_available=1"
 	for i := range notNulCols {
 		filter = filter + " and " + notNulCols[i] + " is not null"
 	}

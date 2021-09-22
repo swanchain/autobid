@@ -148,28 +148,27 @@ func GetNumStrFromStr(numStr string) string {
 }
 
 func GetByteSizeFromStr(sizeStr string) *float64 {
-	var result *float64
+	sizeStr = strings.Trim(sizeStr, " ")
 	numStr := GetNumStrFromStr(sizeStr)
-	unit := strings.Trim(sizeStr, numStr)
-	unit = strings.Trim(unit, " ")
-	unit = strings.ToUpper(unit)
+	numStr = strings.Trim(numStr, " ")
 	size, err := strconv.ParseFloat(numStr, 64)
 	if err != nil {
 		logs.GetLogger().Error(err)
-		*result = 0
-		return result
+		return nil
 	}
+	unit := strings.Trim(sizeStr, numStr)
+	unit = strings.Trim(unit, " ")
+	unit = strings.ToUpper(unit)
 	switch unit {
-	case "GIB":
+	case "GIB", "GB":
 		size = size * 1024 * 1024 * 1024
-	case "MIB":
+	case "MIB", "MB":
 		size = size * 1024 * 1024
-	case "KIB":
+	case "KIB", "KB":
 		size = size * 1024
 	}
 
-	result = &size
-	return result
+	return &size
 }
 
 func IsSameDay(nanoSec1, nanoSec2 int64) bool {

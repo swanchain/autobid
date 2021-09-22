@@ -297,11 +297,11 @@ func IsMinerMatch(miner *models.Miner, task *models.Task, offlineDeals []*models
 	}
 
 	for _, offlineDeal := range offlineDeals {
-		if offlineDeal.FileSizeNumer < *miner.MinPieceSizeByte {
+		if miner.MinPieceSizeByte == nil || offlineDeal.FileSizeNumer < *miner.MinPieceSizeByte {
 			return false
 		}
 
-		if offlineDeal.FileSizeNumer > *miner.MaxPieceSizeByte {
+		if miner.MaxPieceSizeByte == nil || offlineDeal.FileSizeNumer > *miner.MaxPieceSizeByte {
 			return false
 		}
 
