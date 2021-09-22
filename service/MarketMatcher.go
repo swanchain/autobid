@@ -280,7 +280,7 @@ func IsMinerMatch(miner *models.Miner, task *models.Task, offlineDeals []*models
 		return false
 	}
 
-	if miner.AutoBidTaskCnt > miner.AutoBidTaskPerDay && utils.IsSameDay(miner.LastAutoBidAt, time.Now().UnixNano()) {
+	if miner.AutoBidTaskCnt >= miner.AutoBidTaskPerDay && utils.IsSameDay(miner.LastAutoBidAt, time.Now().UnixNano()) {
 		return false
 	}
 

@@ -89,7 +89,6 @@ func TaskAssignMiner(taskId, minerId, autoBidTaskCnt int, lastAutoBidAt int64) e
 	lastAutoBidInfo := make(map[string]interface{})
 	lastAutoBidInfo["auto_bid_task_cnt"] = autoBidTaskCnt
 	lastAutoBidInfo["last_auto_bid_at"] = lastAutoBidAt
-	lastAutoBidInfo["update_time_str"] = second
 
 	ctx := context.Background()
 	db := database.GetDB().BeginTx(ctx, nil)
