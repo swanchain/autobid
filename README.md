@@ -12,7 +12,7 @@ This swan tool listens to the tasks that come from Swan platform. It provides th
 - Database for swan platform.
 
 ## Config
-** ./config/config.toml.example **
+*** ./config/config.toml.example ***
 ```shell
 port = "8888"
 dev = true
@@ -47,9 +47,8 @@ make build   # generate binary file and config file
 
 ### Step 3. Start Swan
 ```shell
-cd ./build/config
-vi ./config.toml   # fill valid configuration
-cd ./build
+cd YOUR_PATH
+cd vi ./build/config/config.toml
 nohup ./go-swan > go-swan.log &
 ```
 
