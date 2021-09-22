@@ -47,7 +47,7 @@ make build   # generate binary file and config file
 
 ### Step 3. Start Swan
 ```shell
-cd go-swan
+cd go-swan/build
 vi ./config/config.toml
 nohup ./go-swan > go-swan.log &
 ```
