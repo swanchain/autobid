@@ -147,7 +147,8 @@ func GetNumStrFromStr(numStr string) string {
 	return ""
 }
 
-func GetByteSizeFromStr(sizeStr string) float64 {
+func GetByteSizeFromStr(sizeStr string) *float64 {
+	var result *float64
 	numStr := GetNumStrFromStr(sizeStr)
 	unit := strings.Trim(sizeStr, numStr)
 	unit = strings.Trim(unit, " ")
@@ -155,7 +156,8 @@ func GetByteSizeFromStr(sizeStr string) float64 {
 	size, err := strconv.ParseFloat(numStr, 64)
 	if err != nil {
 		logs.GetLogger().Error(err)
-		return 0
+		*result = 0
+		return result
 	}
 	switch unit {
 	case "GIB":
@@ -166,7 +168,8 @@ func GetByteSizeFromStr(sizeStr string) float64 {
 		size = size * 1024
 	}
 
-	return size
+	result = &size
+	return result
 }
 
 func IsSameDay(nanoSec1, nanoSec2 int64) bool {

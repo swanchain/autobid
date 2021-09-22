@@ -27,5 +27,8 @@ const (
 	TASK_STATUS_COMPLETED       = "Completed"
 	TASK_STATUS_EXPIRED         = "Expired"
 
+	TASK_TYPE_REGULAR  = "regular"
+	TASK_TYPE_VERIFIED = "verified"
+
 	MINER_STATUS_ACTIVE = "Active"
 )

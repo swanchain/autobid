@@ -110,6 +110,15 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 		return nil
 	}
 
+	if task.Type == nil || (*task.Type != constants.TASK_TYPE_VERIFIED && *task.Type != constants.TASK_TYPE_REGULAR) {
+		logs.GetLogger().Error("Task:", task.Id, " invalid task type")
+		err := models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_ACTION_REQUIRED)
+		if err != nil {
+			logs.GetLogger().Error(err)
+		}
+		return nil
+	}
+
 	offlineDeals, err := models.GetOfflineDealByTaskId(task.Id)
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -129,7 +138,7 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 	}
 
 	for _, offlineDeal := range offlineDeals {
-		offlineDeal.FileSizeNum, err = utils.GetFloat64FromStr(offlineDeal.FileSize)
+		offlineDeal.FileSizeNumer, err = utils.GetFloat64FromStr(offlineDeal.FileSize)
 		if err != nil {
 			logs.GetLogger().Error(err)
 			err = models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_ACTION_REQUIRED)
@@ -139,7 +148,7 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 			return nil
 		}
 
-		if offlineDeal.FileSizeNum < 0 {
+		if offlineDeal.FileSizeNumer < 0 {
 			logs.GetLogger().Error("Deal:", offlineDeal.Id, " no valid file size")
 			err = models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_ACTION_REQUIRED)
 			if err != nil {
@@ -266,16 +275,20 @@ func GetMatchedMiner(score int, task *models.Task, offlineDeals []*models.Offlin
 }
 
 func IsMinerMatch(miner *models.Miner, task *models.Task, offlineDeals []*models.OfflineDeals) bool {
+	if miner.Price == nil || miner.VerifiedPrice == nil || miner.ExpectedSealingTime == nil ||
+		miner.MinPieceSize == nil || miner.MaxPieceSize == nil || miner.StartEpoch == nil {
+		return false
+	}
+
 	if miner.AutoBidTaskCnt >= miner.AutoBidTaskPerDay && utils.IsSameDay(miner.LastAutoBidAt, time.Now().UnixNano()) {
 		return false
 	}
 
-	if miner.Price == nil && miner.VerifiedPrice == nil {
+	if *task.Type == constants.TASK_TYPE_REGULAR && *task.MaxPrice <= *miner.Price {
 		return false
 	}
 
-	minPrice := utils.GetMinFloat64(miner.Price, miner.VerifiedPrice)
-	if *task.MaxPrice <= *minPrice {
+	if *task.Type == constants.TASK_TYPE_VERIFIED && *task.MaxPrice <= *miner.VerifiedPrice {
 		return false
 	}
 
@@ -284,11 +297,15 @@ func IsMinerMatch(miner *models.Miner, task *models.Task, offlineDeals []*models
 	}
 
 	for _, offlineDeal := range offlineDeals {
-		if offlineDeal.FileSizeNum < miner.MinPieceSizeByte || offlineDeal.FileSizeNum > miner.MaxPieceSizeByte {
+		if offlineDeal.FileSizeNumer < *miner.MinPieceSizeByte {
 			return false
 		}
 
-		if offlineDeal.StartEpoch != nil && *offlineDeal.StartEpoch <= miner.StartEpoch {
+		if offlineDeal.FileSizeNumer > *miner.MaxPieceSizeByte {
+			return false
+		}
+
+		if *offlineDeal.StartEpoch <= *miner.StartEpoch {
 			return false
 		}
 	}
@@ -313,8 +330,13 @@ func GetMiners() []*models.Miner {
 			minerStat[miner.Score] = &MinerStat{}
 		}
 
-		miner.MinPieceSizeByte = utils.GetByteSizeFromStr(miner.MinPieceSize)
-		miner.MaxPieceSizeByte = utils.GetByteSizeFromStr(miner.MaxPieceSize)
+		if miner.MinPieceSize != nil {
+			miner.MinPieceSizeByte = utils.GetByteSizeFromStr(*miner.MinPieceSize)
+		}
+
+		if miner.MaxPieceSize != nil {
+			miner.MaxPieceSizeByte = utils.GetByteSizeFromStr(*miner.MaxPieceSize)
+		}
 
 		minerStat[miner.Score].miners = append(minerStat[miner.Score].miners, miner)
 		if miner.Score > maxScore {

@@ -27,7 +27,7 @@ type OfflineDeals struct {
 	PayloadCid           *string `json:"payload_cid"`
 	PieceCid             *string `json:"piece_cid"`
 	DownloadedAt         string  `json:"downloaded_at"`
-	FileSizeNum          float64
+	FileSizeNumer        float64
 }
 
 func GetOfflineDealByTaskId(taskId int) ([]*OfflineDeals, error) {
