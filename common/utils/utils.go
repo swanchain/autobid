@@ -158,6 +158,10 @@ func GetByteSizeFromStr(sizeStr string) *float64 {
 	}
 	unit := strings.Trim(sizeStr, numStr)
 	unit = strings.Trim(unit, " ")
+	if len(unit) == 0 {
+		return &size
+	}
+
 	unit = strings.ToUpper(unit)
 	switch unit {
 	case "GIB", "GB":
@@ -166,6 +170,8 @@ func GetByteSizeFromStr(sizeStr string) *float64 {
 		size = size * 1024 * 1024
 	case "KIB", "KB":
 		size = size * 1024
+	default:
+		return nil
 	}
 
 	return &size
