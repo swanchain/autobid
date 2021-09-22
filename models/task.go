@@ -23,7 +23,7 @@ type Task struct {
 	IsPublic       int      `json:"is_public"`
 	MinPrice       *float64 `json:"min_price"`
 	MaxPrice       *float64 `json:"max_price"`
-	ExpireDays     int      `json:"expire_days"`
+	ExpireDays     *int     `json:"expire_days"`
 	Uuid           string   `json:"uuid"`
 	CuratedDataset string   `json:"curated_dataset"`
 	UpdatedOn      string   `json:"updated_on"`

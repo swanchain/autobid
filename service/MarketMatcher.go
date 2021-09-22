@@ -270,6 +270,19 @@ func IsMinerMatch(miner *models.Miner, task *models.Task, offlineDeals []*models
 		return false
 	}
 
+	if miner.Price == nil && miner.VerifiedPrice == nil {
+		return false
+	}
+
+	minPrice := utils.GetMinFloat64(miner.Price, miner.VerifiedPrice)
+	if *task.MaxPrice <= *minPrice {
+		return false
+	}
+
+	if task.ExpireDays != nil && utils.GetEpochFromDay(*task.ExpireDays) < *miner.ExpectedSealingTime {
+		return false
+	}
+
 	for _, offlineDeal := range offlineDeals {
 		if offlineDeal.FileSizeNum < miner.MinPieceSizeByte || offlineDeal.FileSizeNum > miner.MaxPieceSizeByte {
 			return false
@@ -280,16 +293,12 @@ func IsMinerMatch(miner *models.Miner, task *models.Task, offlineDeals []*models
 		}
 	}
 
-	if !(miner.Price < *task.MaxPrice || miner.VerifiedPrice < *task.MaxPrice) {
-		return false
-	}
-
 	return true
 }
 
 func GetMiners() []*models.Miner {
 	var err error
-	miners, err = models.GetAllMinersOrderByScore(constants.MINER_STATUS_ACTIVE)
+	miners, err = models.GetAutoBidMinersOrderByScore(constants.MINER_STATUS_ACTIVE)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil

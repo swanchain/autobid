@@ -198,3 +198,27 @@ func IsStrEmpty(str *string) bool {
 
 	return false
 }
+
+func GetDayNumFromEpoch(epoch int) int {
+	return epoch / 2 / 60 / 24
+}
+
+func GetEpochFromDay(day int) int {
+	return day * 24 * 60 * 2
+}
+
+func GetMinFloat64(val1, val2 *float64) *float64 {
+	if val1 == nil {
+		return val2
+	}
+
+	if val2 == nil {
+		return val1
+	}
+
+	if *val1 <= *val2 {
+		return val1
+	}
+
+	return val2
+}

@@ -26,7 +26,9 @@ endif
 ifeq ($(shell command -v govendor 2> /dev/null),)
 	$(GOGET) -d -u -v github.com/kardianos/govendor
 endif
+	@echo "1"
 	@dep ensure
+	@echo "2"
 	@govendor init
 	@govendor add +e
 	@rm -rf  ./vendor/github.com/nebulaai/nbai-node/crypto/secp256k1/
