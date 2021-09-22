@@ -79,17 +79,17 @@ func AddTask(task *Task) error {
 }
 
 func TaskAssignMiner(taskId, minerId, autoBidTaskCnt int, lastAutoBidAt int64) error {
-	milliSec := strconv.Itoa(int(time.Now().UnixNano() / 1e9))
+	second := strconv.Itoa(int(time.Now().UnixNano() / 1e9))
 
 	taskInfo := make(map[string]interface{})
 	taskInfo["miner_id"] = minerId
 	taskInfo["status"] = constants.TASK_STATUS_ASSIGNED
-	taskInfo["updated_on"] = milliSec
+	taskInfo["updated_on"] = second
 
 	lastAutoBidInfo := make(map[string]interface{})
 	lastAutoBidInfo["auto_bid_task_cnt"] = autoBidTaskCnt
 	lastAutoBidInfo["last_auto_bid_at"] = lastAutoBidAt
-	lastAutoBidInfo["update_time_str"] = milliSec
+	lastAutoBidInfo["update_time_str"] = second
 
 	ctx := context.Background()
 	db := database.GetDB().BeginTx(ctx, nil)
@@ -120,10 +120,10 @@ func TaskAssignMiner(taskId, minerId, autoBidTaskCnt int, lastAutoBidAt int64) e
 }
 
 func TaskUpdateStatus(taskId int, status string) error {
-	milliSec := strconv.Itoa(int(time.Now().UnixNano() / 1e9))
+	second := strconv.Itoa(int(time.Now().UnixNano() / 1e9))
 	taskInfo := make(map[string]interface{})
 	taskInfo["status"] = status
-	taskInfo["updated_on"] = milliSec
+	taskInfo["updated_on"] = second
 
 	err := database.GetDB().Model(&Task{}).Where("id=?", taskId).Update(taskInfo).Error
 
