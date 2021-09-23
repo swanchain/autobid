@@ -170,6 +170,8 @@ func GetByteSizeFromStr(sizeStr string) *float64 {
 		size = size * 1024 * 1024
 	case "KIB", "KB":
 		size = size * 1024
+	case "BYTE", "B":
+		return &size
 	default:
 		return nil
 	}
