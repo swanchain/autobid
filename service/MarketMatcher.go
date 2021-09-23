@@ -339,7 +339,8 @@ func GetMiners() []*models.Miner {
 		}
 
 		if miner.StartEpoch != nil {
-			*miner.StartEpochAbs = utils.GetCurrentEpoch() + *miner.StartEpoch + constants.EPOCH_PER_HOUR
+			epochAbs := utils.GetCurrentEpoch() + *miner.StartEpoch + constants.EPOCH_PER_HOUR
+			miner.StartEpochAbs = &epochAbs
 		}
 
 		minerStat[miner.Score].miners = append(minerStat[miner.Score].miners, miner)

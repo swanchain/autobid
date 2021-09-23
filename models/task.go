@@ -81,7 +81,7 @@ func TaskAssignMiner(taskId, minerId, autoBidTaskCnt int, lastAutoBidAt int64) e
 	taskInfo := make(map[string]interface{})
 	taskInfo["miner_id"] = minerId
 	taskInfo["status"] = constants.TASK_STATUS_ASSIGNED
-	taskInfo["updated_on"] = time.Now().Second()
+	taskInfo["updated_on"] = time.Now().UnixNano() / 1e9
 
 	lastAutoBidInfo := make(map[string]interface{})
 	lastAutoBidInfo["auto_bid_task_cnt"] = autoBidTaskCnt
@@ -118,7 +118,7 @@ func TaskAssignMiner(taskId, minerId, autoBidTaskCnt int, lastAutoBidAt int64) e
 func TaskUpdateStatus(taskId int, status string) error {
 	taskInfo := make(map[string]interface{})
 	taskInfo["status"] = status
-	taskInfo["updated_on"] = time.Now().Second()
+	taskInfo["updated_on"] = time.Now().UnixNano() / 1e9
 
 	err := database.GetDB().Model(&Task{}).Where("id=?", taskId).Update(taskInfo).Error
 

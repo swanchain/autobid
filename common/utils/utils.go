@@ -232,5 +232,7 @@ func GetMinFloat64(val1, val2 *float64) *float64 {
 }
 
 func GetCurrentEpoch() int {
-	return (time.Now().Second() - 1598306471) / 30
+	currentNanoSec := time.Now().UnixNano()
+	currentEpoch := (currentNanoSec/1e9 - 1598306471) / 30
+	return int(currentEpoch)
 }
