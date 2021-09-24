@@ -37,7 +37,7 @@ git checkout dev
 
 ### Step 2. Compile Code
 ```shell
-make   # generate binary file and config file
+make   # generate binary file and config file to ./build folder
 ```
 
 ### Step 3. Start Swan
