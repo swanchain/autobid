@@ -14,17 +14,17 @@ This swan tool listens to the auto-bid tasks that come from Swan platform. It pr
 ## Config
 * ./config/config.toml.example
 ```shell
-port = "8888"
+port = 8888
 auto_bid_interval_sec = 120 #auto bid interval, unit:second
 
 [database]
-db_host = "192.168.88.188"     # ip of the host for database instance running on
-db_port = "3306"               # port of the host for database instance running on
-db_schema_name = "sr2"         # database schema name for swan
-db_username = "root"           # username to access the database
-db_password = ""               # password to access the database
+db_host = "192.168.88.188"   # ip of the host for database instance running on
+db_port = 3306               # port of the host for database instance running on
+db_schema_name = "sr2"       # database schema name for swan
+db_username = "root"         # username to access the database
+db_password = ""             # password to access the database
 db_args = "charset=utf8mb4&parseTime=True&loc=Local" # other arguments to access database
-db_max_idle_conn_num = 10      # maximum number of connections in the idle connection pool
+db_max_idle_conn_num = 10    # maximum number of connections in the idle connection pool
 ```
 ## How to use
 
