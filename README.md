@@ -31,12 +31,12 @@ db_max_idle_conn_num = 10      # maximum number of connections in the idle conne
 ### Step 1. Download code
 ```shell
 git clone git@192.168.88.183:NebulaAI-BlockChain/go-swan.git
+cd go-swan
 git checkout dev
 ```
 
 ### Step 2. Compile Provider
 ```shell
-cd go-swan
 make help    # view how to use make tool
 make clean   # remove generated binary file and config file
 make test    # Run unit tests
