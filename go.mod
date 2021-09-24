@@ -12,9 +12,3 @@ require (
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
 	github.com/sirupsen/logrus v1.8.1
 )
-
-require (
-	github.com/golang/protobuf v1.5.2 // indirect
-	golang.org/x/sys v0.0.0-20210921065528-437939a70204 // indirect
-	google.golang.org/protobuf v1.27.1 // indirect
-)

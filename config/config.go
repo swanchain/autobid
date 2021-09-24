@@ -9,7 +9,6 @@ import (
 
 type Configuration struct {
 	Port               string        `toml:"port"`
-	Dev                bool          `toml:"dev"`
 	AutoBidIntervalSec time.Duration `toml:"auto_bid_interval_sec"`
 	Database           database      `toml:"database"`
 }
@@ -56,7 +55,6 @@ func GetConfigFromMainParams(configFile string) Configuration {
 func requiredFieldsAreGiven(metaData toml.MetaData) bool {
 	requiredFields := [][]string{
 		{"port"},
-		{"dev"},
 		{"auto_bid_interval_sec"},
 		{"database"},
 

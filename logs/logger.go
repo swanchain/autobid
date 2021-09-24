@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
-	"go-swan/config"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -13,14 +12,7 @@ import (
 var logger *logrus.Logger
 
 func initLogger() {
-	conf := config.GetConfig()
-
 	logger = logrus.New()
-	if conf.Dev {
-		logger.SetLevel(logrus.DebugLevel)
-	} else {
-		logger.SetLevel(logrus.InfoLevel)
-	}
 
 	formatter := &logrus.TextFormatter{
 		TimestampFormat: "2006-01-02 15:04:05.000",
