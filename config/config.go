@@ -8,14 +8,14 @@ import (
 )
 
 type Configuration struct {
-	Port               string        `toml:"port"`
+	Port               int           `toml:"port"`
 	AutoBidIntervalSec time.Duration `toml:"auto_bid_interval_sec"`
 	Database           database      `toml:"database"`
 }
 
 type database struct {
 	DbHost           string `toml:"db_host"`
-	DbPort           string `toml:"db_port"`
+	DbPort           int    `toml:"db_port"`
 	DbSchemaName     string `toml:"db_schema_name"`
 	DbUsername       string `toml:"db_username"`
 	DbPassword       string `toml:"db_password"`

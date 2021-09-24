@@ -10,6 +10,7 @@ import (
 	"go-swan/logs"
 	"go-swan/routers/commonRouters"
 	"go-swan/service"
+	"strconv"
 	"time"
 )
 
@@ -43,7 +44,7 @@ func createGinServer() {
 
 	v1 := r.Group("/api/v1")
 	commonRouters.HostManager(v1.Group(constants.URL_HOST_GET_COMMON))
-	err := r.Run(":" + config.GetConfig().Port)
+	err := r.Run(":" + strconv.Itoa(config.GetConfig().Port))
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}

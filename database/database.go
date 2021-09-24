@@ -6,6 +6,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"go-swan/config"
 	"go-swan/logs"
+	"strconv"
 )
 
 type Database struct {
@@ -17,7 +18,7 @@ var DB *gorm.DB
 // Opening a database and save the reference to `Database` struct.
 func Init() *gorm.DB {
 	confDb := config.GetConfig().Database
-	dbSource := confDb.DbUsername + ":" + confDb.DbPassword + "@tcp(" + confDb.DbHost + ":" + confDb.DbPort + ")/" + confDb.DbSchemaName + "?" + confDb.DbArgs
+	dbSource := confDb.DbUsername + ":" + confDb.DbPassword + "@tcp(" + confDb.DbHost + ":" + strconv.Itoa(confDb.DbPort) + ")/" + confDb.DbSchemaName + "?" + confDb.DbArgs
 	db, err := gorm.Open("mysql", dbSource)
 	if err != nil {
 		logs.GetLogger().Fatal("db err: ", err)
