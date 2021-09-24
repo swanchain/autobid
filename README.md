@@ -35,12 +35,9 @@ cd go-swan
 git checkout dev
 ```
 
-### Step 2. Compile Provider
+### Step 2. Compile Code
 ```shell
-make help    # view how to use make tool
-make clean   # remove generated binary file and config file
-make test    # Run unit tests
-make build   # generate binary file and config file
+make   # generate binary file and config file
 ```
 
 ### Step 3. Start Swan
