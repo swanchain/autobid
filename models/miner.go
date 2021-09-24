@@ -65,7 +65,7 @@ func GetAutoBidMinersOrderByScore(status string) ([]*Miner, error) {
 	for i := range notNulCols {
 		filter = filter + " and " + notNulCols[i] + " is not null"
 	}
-	err := database.GetDB().Where(filter, status).Order("Score").Find(&miners).Error
+	err := database.GetDB().Where(filter, status).Find(&miners).Error
 
 	if err != nil {
 		logs.GetLogger().Error(err)
