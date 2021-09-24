@@ -11,14 +11,6 @@ import (
 
 var miners []*models.Miner = nil
 
-type MinerStat struct {
-	miners []*models.Miner
-}
-
-var minScore = 100
-var maxScore = 0
-var minerStat [101]*MinerStat
-
 const DEFAULT_TASK_PAGE_SIZE = 100
 
 func FindMiners() {
@@ -30,11 +22,6 @@ func FindMiners() {
 
 func FindMiner4AllTasks() {
 	miners = nil
-	minScore = 100
-	maxScore = 0
-	for i := 0; i < len(minerStat); i++ {
-		minerStat[i] = nil
-	}
 	GetMiners()
 
 	taskCntDealt := 0
@@ -200,75 +187,59 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 }
 
 func SelectMiner(task *models.Task, offlineDeals []*models.OfflineDeals) *models.Miner {
-	score := utils.GetRandInRange(minScore, maxScore)
-	scoreUp := score
-	scoreDown := score - 1
-	for scoreUp <= 100 || scoreDown >= 0 {
-		if scoreUp <= 100 {
-			miner := GetMatchedMiner(scoreUp, task, offlineDeals)
-			if miner != nil {
-				return miner
-			}
+	for _, miner := range miners {
+		miner.IsScanned = false
+	}
+
+	for i := 0; i < len(miners)/2; i++ {
+		miner := FindMiner(task, offlineDeals)
+		if miner != nil {
+			return miner
+		}
+	}
+
+	for _, miner := range miners {
+		if miner.IsScanned {
+			continue
 		}
 
-		if scoreDown >= 0 {
-			miner := GetMatchedMiner(scoreDown, task, offlineDeals)
-			if miner != nil {
-				return miner
-			}
+		miner.IsScanned = true
+		isMinerMatch := IsMinerMatch(miner, task, offlineDeals)
+		if isMinerMatch {
+			return miner
 		}
-
-		scoreUp++
-		scoreDown--
 	}
 
 	return nil
 }
 
-func GetMatchedMiner(score int, task *models.Task, offlineDeals []*models.OfflineDeals) *models.Miner {
-	if minerStat[score] == nil {
-		return nil
-	}
+func FindMiner(task *models.Task, offlineDeals []*models.OfflineDeals) *models.Miner {
+	maxRand := miners[len(miners)-1].ScoreSumBefore
+	scoreSumRand := utils.GetRandInRange(1, maxRand)
 
-	if minerStat[score].miners == nil {
-		return nil
-	}
-
-	cntScoreMiner := len(minerStat[score].miners)
-
-	if cntScoreMiner == 0 {
-		return nil
-	}
-
-	var isChecked []bool
-	for i := 0; i < cntScoreMiner; i++ {
-		isChecked = append(isChecked, false)
-	}
-
-	for i := 0; i < cntScoreMiner; i++ {
-		minerIndex := utils.GetRandInRange(0, cntScoreMiner-1)
-		if isChecked[minerIndex] {
+	start := 0
+	end := len(miners) - 1
+	for start <= end {
+		mid := (start + end) / 2
+		miner := miners[mid]
+		scoreSumEnd := miner.ScoreSumBefore
+		scoreSumStart := scoreSumEnd - miner.Score
+		if scoreSumRand > scoreSumEnd {
+			start = mid + 1
 			continue
 		}
 
-		isChecked[minerIndex] = true
-		miner := minerStat[score].miners[minerIndex]
+		if scoreSumRand <= scoreSumStart {
+			end = mid - 1
+			continue
+		}
+
+		miner.IsScanned = true
 		isMinerMatch := IsMinerMatch(miner, task, offlineDeals)
 		if isMinerMatch {
 			return miner
 		}
-	}
-
-	for i := 0; i < cntScoreMiner; i++ {
-		if isChecked[i] {
-			continue
-		}
-
-		miner := minerStat[score].miners[i]
-		isMinerMatch := IsMinerMatch(miner, task, offlineDeals)
-		if isMinerMatch {
-			return miner
-		}
+		return nil
 	}
 
 	return nil
@@ -325,11 +296,7 @@ func GetMiners() []*models.Miner {
 		return nil
 	}
 
-	for _, miner := range miners {
-		if minerStat[miner.Score] == nil {
-			minerStat[miner.Score] = &MinerStat{}
-		}
-
+	for i, miner := range miners {
 		if miner.MinPieceSize != nil {
 			miner.MinPieceSizeByte = utils.GetByteSizeFromStr(*miner.MinPieceSize)
 		}
@@ -343,14 +310,13 @@ func GetMiners() []*models.Miner {
 			miner.StartEpochAbs = &epochAbs
 		}
 
-		minerStat[miner.Score].miners = append(minerStat[miner.Score].miners, miner)
-		if miner.Score > maxScore {
-			maxScore = miner.Score
+		if i == 0 {
+			miner.ScoreSumBefore = miner.Score
+		} else {
+			miner.ScoreSumBefore = miner.Score + miners[i-1].ScoreSumBefore
 		}
 
-		if miner.Score < minScore {
-			minScore = miner.Score
-		}
+		miner.IsScanned = false
 	}
 
 	return miners

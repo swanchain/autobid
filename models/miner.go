@@ -36,6 +36,8 @@ type Miner struct {
 	StartEpochAbs          *int
 	MinPieceSizeByte       *float64
 	MaxPieceSizeByte       *float64
+	ScoreSumBefore         int
+	IsScanned              bool
 }
 
 func GetMiners(pageNum int, pageSize int, status string) ([]*Miner, error) {
