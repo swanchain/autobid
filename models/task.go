@@ -5,6 +5,7 @@ import (
 	"go-swan/common/constants"
 	"go-swan/database"
 	"go-swan/logs"
+	"strconv"
 	"time"
 )
 
@@ -81,7 +82,7 @@ func TaskAssignMiner(taskId, minerId, autoBidTaskCnt int, lastAutoBidAt int64) e
 	taskInfo := make(map[string]interface{})
 	taskInfo["miner_id"] = minerId
 	taskInfo["status"] = constants.TASK_STATUS_ASSIGNED
-	taskInfo["updated_on"] = time.Now().UnixNano() / 1e9
+	taskInfo["updated_on"] = strconv.FormatInt(time.Now().UnixNano()/1e9, 10)
 
 	lastAutoBidInfo := make(map[string]interface{})
 	lastAutoBidInfo["auto_bid_task_cnt"] = autoBidTaskCnt

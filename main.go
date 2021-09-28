@@ -1,9 +1,7 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	cors "github.com/itsjamie/gin-cors"
-	"github.com/jinzhu/gorm"
+	"fmt"
 	"go-swan/common/constants"
 	"go-swan/config"
 	"go-swan/database"
@@ -12,6 +10,10 @@ import (
 	"go-swan/service"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	cors "github.com/itsjamie/gin-cors"
+	"github.com/jinzhu/gorm"
 )
 
 func main() {
@@ -27,6 +29,7 @@ func main() {
 	go service.FindMiners()
 	createGinServer()
 
+	fmt.Println("hello")
 	//test.Test()
 }
 
