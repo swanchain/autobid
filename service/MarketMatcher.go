@@ -236,6 +236,10 @@ func FindMiner(task *models.Task, offlineDeals []*models.OfflineDeals) *models.M
 			continue
 		}
 
+		if miner.IsScanned {
+			return nil
+		}
+
 		miner.IsScanned = true
 		isMinerMatch := IsMinerMatch(miner, task, offlineDeals)
 		if isMinerMatch {
