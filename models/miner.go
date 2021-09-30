@@ -33,11 +33,11 @@ type Miner struct {
 	AutoBidTaskCnt         int      `json:"auto_bid_task_cnt"`
 	LastAutoBidAt          int64    `json:"last_auto_bid_at"` //millisecond of last auto-bid task for this miner
 	ExpectedSealingTime    *int     `json:"expected_sealing_time"`
+	IsScanned              bool
+	ScoreSumBefore         int
 	StartEpochAbs          *int
 	MinPieceSizeByte       *float64
 	MaxPieceSizeByte       *float64
-	ScoreSumBefore         int
-	IsScanned              bool
 }
 
 func GetMiners(pageNum int, pageSize int, status string) ([]*Miner, error) {
@@ -52,14 +52,10 @@ func GetMiners(pageNum int, pageSize int, status string) ([]*Miner, error) {
 	return miners, nil
 }
 
-func GetAutoBidMinersOrderByScore(status string) ([]*Miner, error) {
+func GetAutoBidMiners(status string) ([]*Miner, error) {
 	var miners []*Miner
 	var notNulCols []string
-	notNulCols = append(notNulCols, "price")
-	notNulCols = append(notNulCols, "verified_price")
 	notNulCols = append(notNulCols, "expected_sealing_time")
-	notNulCols = append(notNulCols, "min_piece_size")
-	notNulCols = append(notNulCols, "max_piece_size")
 	notNulCols = append(notNulCols, "start_epoch")
 	filter := "bid_mode=1 and status=? and offline_deal_available=1"
 	for i := range notNulCols {

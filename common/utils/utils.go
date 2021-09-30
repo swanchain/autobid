@@ -3,10 +3,6 @@ package utils
 import (
 	"context"
 	"encoding/json"
-	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"go-swan/logs"
 	"io/ioutil"
 	"math/big"
@@ -16,6 +12,11 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/ethclient"
 )
 
 // GetEpochInMillis get current timestamp
@@ -140,7 +141,7 @@ func GetNumStrFromStr(numStr string) string {
 	re := regexp.MustCompile("[0-9]+.?[0-9]*")
 	words := re.FindAllString(numStr, -1)
 	//logs.GetLogger().Info("words:", words)
-	if words != nil && len(words) > 0 {
+	if len(words) > 0 {
 		return words[0]
 	}
 
@@ -237,4 +238,20 @@ func GetCurrentEpoch() int {
 	currentNanoSec := time.Now().UnixNano()
 	currentEpoch := (currentNanoSec/1e9 - 1598306471) / 30
 	return int(currentEpoch)
+}
+
+func SearchFloat64FromStr(source string) *float64 {
+	re := regexp.MustCompile("[0-9]+.?[0-9]*")
+	words := re.FindAllString(source, -1)
+	if len(words) > 0 {
+		numStr := strings.Trim(words[0], " ")
+		result, err := strconv.ParseFloat(numStr, 64)
+		if err != nil {
+			logs.GetLogger().Error(err)
+			return nil
+		}
+		return &result
+	}
+
+	return nil
 }

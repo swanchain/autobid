@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"go-swan/common/constants"
 	"go-swan/config"
 	"go-swan/database"
@@ -28,8 +27,6 @@ func main() {
 
 	go service.FindMiners()
 	createGinServer()
-
-	fmt.Println("hello")
 	//test.Test()
 }
 

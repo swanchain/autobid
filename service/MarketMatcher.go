@@ -42,11 +42,11 @@ func FindMiner4Tasks() int {
 		return 0
 	}
 
-	if tasks == nil || len(tasks) == 0 {
+	if len(tasks) == 0 {
 		return 0
 	}
 
-	if miners == nil || len(miners) == 0 {
+	if len(miners) == 0 {
 		logs.GetLogger().Info("No miners")
 		return 0
 	}
@@ -58,6 +58,8 @@ func FindMiner4Tasks() int {
 			logs.GetLogger().Error("Did not find miner for task: ", task.TaskName, " id=", task.Id)
 			continue
 		}
+
+		logs.GetLogger().Info("Allocated miner:", miner.Id, " to task:", task.Id)
 
 		currentNanoSec := time.Now().UnixNano()
 		autoBidTaskCnt := 1
@@ -252,31 +254,51 @@ func IsMinerMatch(miner *models.Miner, task *models.Task, offlineDeals []*models
 	}
 
 	if miner.AutoBidTaskCnt >= miner.AutoBidTaskPerDay && utils.IsSameDay(miner.LastAutoBidAt, time.Now().UnixNano()) {
+		logs.GetLogger().Info("Auto-bid tasks are enough. miner:", miner.Id, " task:", task.Id)
 		return false
 	}
 
 	if *task.Type == constants.TASK_TYPE_REGULAR && *task.MaxPrice < *miner.Price {
+		logs.GetLogger().Info("*task.MaxPrice:", *task.MaxPrice, " < *miner.Price", *miner.Price, miner.Id, " task:", task.Id)
 		return false
 	}
 
 	if *task.Type == constants.TASK_TYPE_VERIFIED && *task.MaxPrice < *miner.VerifiedPrice {
+		logs.GetLogger().Info("*task.MaxPrice:", *task.MaxPrice, " < *miner.VerifiedPrice", *miner.VerifiedPrice, miner.Id, " task:", task.Id)
 		return false
 	}
 
-	if task.ExpireDays != nil && utils.GetEpochFromDay(*task.ExpireDays) < *miner.ExpectedSealingTime {
-		return false
+	if task.ExpireDays != nil {
+		taskExpireEpoch := utils.GetEpochFromDay(*task.ExpireDays)
+		if taskExpireEpoch < *miner.ExpectedSealingTime {
+			logs.GetLogger().Info("taskExpireEpoch:", taskExpireEpoch, " < *miner.ExpectedSealingTime:", *miner.ExpectedSealingTime, " miner:", miner.Id, " task:", task.Id)
+			return false
+		}
 	}
 
 	for _, offlineDeal := range offlineDeals {
 		if miner.MinPieceSizeByte == nil || offlineDeal.FileSizeNumer < *miner.MinPieceSizeByte {
+			if miner.MinPieceSizeByte == nil {
+				logs.GetLogger().Info("miner.MinPieceSizeByte == nil. miner:", miner.Id, " task:", task.Id, " offlineDeal:", offlineDeal.Id)
+			} else {
+				logs.GetLogger().Info("offlineDeal.FileSizeNumer:", offlineDeal.FileSizeNumer, " < *miner.MinPieceSizeByte:", *miner.MinPieceSizeByte, " miner:", miner.Id, " task:", task.Id, " offlineDeal:", offlineDeal.Id)
+			}
+
 			return false
 		}
 
 		if miner.MaxPieceSizeByte == nil || offlineDeal.FileSizeNumer > *miner.MaxPieceSizeByte {
+			if miner.MaxPieceSizeByte == nil {
+				logs.GetLogger().Info("miner.MaxPieceSizeByte == nil. miner:", miner.Id, " task:", task.Id, " offlineDeal:", offlineDeal.Id)
+			} else {
+				logs.GetLogger().Info("offlineDeal.FileSizeNumer:", offlineDeal.FileSizeNumer, " > *miner.MaxPieceSizeByte:", *miner.MaxPieceSizeByte, " miner:", miner.Id, " task:", task.Id, " offlineDeal:", offlineDeal.Id)
+			}
+
 			return false
 		}
 
 		if *offlineDeal.StartEpoch < *miner.StartEpochAbs {
+			logs.GetLogger().Info("*offlineDeal.StartEpoch:", *offlineDeal.StartEpoch, " < *miner.StartEpochAbs:", *miner.StartEpochAbs, miner.Id, " task:", task.Id, " offlineDeal:", offlineDeal.Id)
 			return false
 		}
 	}
@@ -286,17 +308,19 @@ func IsMinerMatch(miner *models.Miner, task *models.Task, offlineDeals []*models
 
 func GetMiners() []*models.Miner {
 	var err error
-	miners, err = models.GetAutoBidMinersOrderByScore(constants.MINER_STATUS_ACTIVE)
+	miners, err = models.GetAutoBidMiners(constants.MINER_STATUS_ACTIVE)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil
 	}
 
-	if miners == nil || len(miners) == 0 {
+	if len(miners) == 0 {
 		return nil
 	}
 
 	for i, miner := range miners {
+		utils.LotusGetMinerInfo(miner)
+
 		if miner.MinPieceSize != nil {
 			miner.MinPieceSizeByte = utils.GetByteSizeFromStr(*miner.MinPieceSize)
 		}

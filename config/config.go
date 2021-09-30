@@ -1,10 +1,11 @@
 package config
 
 import (
-	"github.com/BurntSushi/toml"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/BurntSushi/toml"
 )
 
 type Configuration struct {
