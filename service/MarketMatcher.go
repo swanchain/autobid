@@ -259,12 +259,12 @@ func IsMinerMatch(miner *models.Miner, task *models.Task, offlineDeals []*models
 	}
 
 	if *task.Type == constants.TASK_TYPE_REGULAR && *task.MaxPrice < *miner.Price {
-		logs.GetLogger().Info("*task.MaxPrice:", *task.MaxPrice, " < *miner.Price", *miner.Price, miner.Id, " task:", task.Id)
+		logs.GetLogger().Info("*task.MaxPrice:", *task.MaxPrice, " < *miner.Price", *miner.Price, " miner:", miner.Id, " task:", task.Id)
 		return false
 	}
 
 	if *task.Type == constants.TASK_TYPE_VERIFIED && *task.MaxPrice < *miner.VerifiedPrice {
-		logs.GetLogger().Info("*task.MaxPrice:", *task.MaxPrice, " < *miner.VerifiedPrice", *miner.VerifiedPrice, miner.Id, " task:", task.Id)
+		logs.GetLogger().Info("*task.MaxPrice:", *task.MaxPrice, " < *miner.VerifiedPrice", *miner.VerifiedPrice, " miner:", miner.Id, " task:", task.Id)
 		return false
 	}
 
@@ -298,7 +298,7 @@ func IsMinerMatch(miner *models.Miner, task *models.Task, offlineDeals []*models
 		}
 
 		if *offlineDeal.StartEpoch < *miner.StartEpochAbs {
-			logs.GetLogger().Info("*offlineDeal.StartEpoch:", *offlineDeal.StartEpoch, " < *miner.StartEpochAbs:", *miner.StartEpochAbs, miner.Id, " task:", task.Id, " offlineDeal:", offlineDeal.Id)
+			logs.GetLogger().Info("*offlineDeal.StartEpoch:", *offlineDeal.StartEpoch, " < *miner.StartEpochAbs:", *miner.StartEpochAbs, " miner:", miner.Id, " task:", task.Id, " offlineDeal:", offlineDeal.Id)
 			return false
 		}
 	}
