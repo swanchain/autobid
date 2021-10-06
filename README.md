@@ -44,7 +44,13 @@ make   # generate binary file and config file to ./build folder
 ```shell
 cd build
 vi ./config/config.toml
-nohup ./go-swan > go-swan.log &
+./go-swan > go-swan.log &
+```
+
+#### Note
+You can add **nohup** before **./go-swan > go-swan.log &** to ignore the HUP (hangup) signal and therefore avoid stop when you log out.
+```shell
+nohup ./swan-provider > ./swan-provider.log &
 ```
 
 The deal status will be synchronized on the filwan.com, both client and miner will know the status changes in realtime.
