@@ -32,7 +32,7 @@ db_max_idle_conn_num = 10    # maximum number of connections in the idle connect
 ```shell
 git clone git@192.168.88.183:NebulaAI-BlockChain/go-swan.git
 cd go-swan
-git checkout dev
+git checkout release-0.1.0
 ```
 
 ### Step 2. Compile Code
