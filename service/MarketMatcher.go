@@ -312,7 +312,7 @@ func IsMinerMatch(miner *models.Miner, task *models.Task, offlineDeals []*models
 
 func GetMiners() []*models.Miner {
 	var err error
-	miners, err = models.GetAutoBidMiners(constants.MINER_STATUS_ACTIVE)
+	miners, err = models.GetAutoBidMiners()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil

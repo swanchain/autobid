@@ -11,14 +11,7 @@ import (
 )
 
 func Test() {
-	//TestTask_GetTasks()
-	//TestTask_GetAutoBidTasks()
-	//TestMiner_GetAllMiners()
-	//service.FindMiner4AllTasks()
-	//models.MinerUpdateLastAutoBidInfo(726, 19, time.Now().UnixNano())
-	//models.TaskAssignMiner(1389, 14)
-	testRandomInt2()
-	fmt.Println("hello")
+	models.GetAutoBidMiners()
 }
 
 func testRandomInt2() {

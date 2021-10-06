@@ -6,7 +6,7 @@ import (
 	"go-swan/database"
 	"go-swan/logs"
 	"go-swan/routers/commonRouters"
-	"go-swan/service"
+	"go-swan/test"
 	"strconv"
 	"time"
 
@@ -25,9 +25,9 @@ func main() {
 		}
 	}()
 
-	go service.FindMiners()
-	createGinServer()
-	//test.Test()
+	//go service.FindMiners()
+	//createGinServer()
+	test.Test()
 }
 
 func createGinServer() {

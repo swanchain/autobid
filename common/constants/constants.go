@@ -31,5 +31,7 @@ const (
 	TASK_TYPE_REGULAR  = "regular"
 	TASK_TYPE_VERIFIED = "verified"
 
-	MINER_STATUS_ACTIVE = "Active"
+	MINER_STATUS_ACTIVE       = "Active"
+	SWAN_MINER_STATUS_ONLINE  = "Online"
+	SWAN_MINER_STATUS_OFFLINE = "Offline"
 )
