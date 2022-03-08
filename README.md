@@ -30,7 +30,7 @@ db_max_idle_conn_num = 10    # maximum number of connections in the idle connect
 
 ### Step 1. Download code
 ```shell
-git clone git@192.168.88.183:NebulaAI-BlockChain/go-swan.git
+git clone https://github.com/filswan/autobid.git
 cd go-swan
 git checkout release-0.1.0
 ```
@@ -50,7 +50,7 @@ vi ./config/config.toml
 #### Note
 You can add **nohup** before **./go-swan > go-swan.log &** to ignore the HUP (hangup) signal and therefore avoid stop when you log out.
 ```shell
-nohup ./swan-provider > ./swan-provider.log &
+nohup ./go-swan > ./go-swan.log &
 ```
 
 The deal status will be synchronized on the filwan.com, both client and miner will know the status changes in realtime.
