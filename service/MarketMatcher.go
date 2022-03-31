@@ -11,7 +11,7 @@ import (
 
 var miners []*models.Miner = nil
 
-const DEFAULT_TASK_PAGE_SIZE = 100
+const DEFAULT_TASK_PAGE_SIZE = 10000
 
 func FindMiners() {
 	for {
@@ -36,7 +36,7 @@ func FindMiner4AllTasks() {
 }
 
 func FindMiner4Tasks() int {
-	tasks, err := models.GetAutoBidTasks(0, 100, constants.TASK_STATUS_CREATED)
+	tasks, err := models.GetAutoBidTasks(0, DEFAULT_TASK_PAGE_SIZE, constants.TASK_STATUS_CREATED)
 	if err != nil {
 		logs.GetLogger().Info(err)
 		return 0
