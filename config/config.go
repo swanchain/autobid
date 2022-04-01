@@ -12,6 +12,7 @@ type Configuration struct {
 	Port               int           `toml:"port"`
 	AutoBidIntervalSec time.Duration `toml:"auto_bid_interval_sec"`
 	Database           database      `toml:"database"`
+	Lotus              lotus         `toml:"lotus"`
 }
 
 type database struct {
@@ -22,6 +23,10 @@ type database struct {
 	DbPassword       string `toml:"db_password"`
 	DbArgs           string `toml:"db_args"`
 	DbMaxIdleConnNum int    `toml:"db_max_idle_conn_num"`
+}
+type lotus struct {
+	ClientApiUrl      string `toml:"client_api_url"`
+	ClientAccessToken string `toml:"client_access_token"`
 }
 
 var config *Configuration
@@ -66,6 +71,9 @@ func requiredFieldsAreGiven(metaData toml.MetaData) bool {
 		{"database", "db_password"},
 		{"database", "db_args"},
 		{"database", "db_max_idle_conn_num"},
+
+		{"lotus", "client_api_url"},
+		{"lotus", "client_access_token"},
 	}
 
 	for _, v := range requiredFields {
