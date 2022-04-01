@@ -1,6 +1,6 @@
 package common
 
-import "go-swan/common/constants"
+import "autobid/common/constants"
 
 type BasicResponse struct {
 	Status   string      `json:"status"`

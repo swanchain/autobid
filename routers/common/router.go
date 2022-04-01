@@ -1,11 +1,12 @@
 package commonRouters
 
 import (
-	"github.com/gin-gonic/gin"
-	"go-swan/common"
-	"go-swan/common/constants"
+	"autobid/common"
+	"autobid/common/constants"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func HostManager(router *gin.RouterGroup) {

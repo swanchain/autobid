@@ -1,12 +1,12 @@
 package service
 
 import (
+	"autobid/common/constants"
+	"autobid/common/utils"
+	"autobid/config"
+	"autobid/logs"
+	"autobid/models"
 	"fmt"
-	"go-swan/common/constants"
-	"go-swan/common/utils"
-	"go-swan/config"
-	"go-swan/logs"
-	"go-swan/models"
 	"strconv"
 	"time"
 
@@ -336,7 +336,7 @@ func GetMiners() []*models.Miner {
 		return nil
 	}
 
-	lotusClient, err := lotus.LotusGetClient(config.GetConfig().Lotus.ClientApiUrl, config.GetConfig().Lotus.ClientAccessToken)
+	lotusClient, err := lotus.LotusGetClient(config.GetConfig().Lotus.ClientApiUrl, "")
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil

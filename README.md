@@ -15,24 +15,28 @@ This swan tool listens to the auto-bid tasks that come from Swan platform. It pr
 * ./config/config.toml.example
 ```shell
 port = 8888
-auto_bid_interval_sec = 120 #auto bid interval, unit:second
+auto_bid_interval_sec = 120  #auto bid interval, unit:second
 
 [database]
-db_host = ""   # ip of the host for database instance running on
+db_host = ""                 # ip of the host for database instance running on
 db_port = 3306               # port of the host for database instance running on
-db_schema_name = ""       # database schema name for swan
+db_schema_name = ""          # database schema name for swan
 db_username = "root"         # username to access the database
 db_password = ""             # password to access the database
 db_args = "charset=utf8mb4&parseTime=True&loc=Local" # other arguments to access database
 db_max_idle_conn_num = 10    # maximum number of connections in the idle connection pool
+
+[lotus]
+client_api_url = "http://[ip]:[port]/rpc/v0"   # Url of lotus client web api, generally the [port] is 1234
 ```
+
 ## How to use
 
 ### Step 1. Download code
 ```shell
 git clone https://github.com/filswan/autobid.git
-cd go-swan
-git checkout release-0.1.0
+cd autobid
+git checkout <branch-name>
 ```
 
 ### Step 2. Compile Code
@@ -44,13 +48,13 @@ make   # generate binary file and config file to ./build folder
 ```shell
 cd build
 vi ./config/config.toml
-./go-swan > go-swan.log &
+./autobid > autobid.log &
 ```
 
 #### Note
-You can add **nohup** before **./go-swan > go-swan.log &** to ignore the HUP (hangup) signal and therefore avoid stop when you log out.
+You can add **nohup** before **./autobid > autobid.log &** to ignore the HUP (hangup) signal and therefore avoid stop when you log out.
 ```shell
-nohup ./go-swan > ./go-swan.log &
+nohup ./autobid > ./autobid.log &
 ```
 
 The deal status will be synchronized on the filwan.com, both client and miner will know the status changes in realtime.

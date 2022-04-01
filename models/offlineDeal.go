@@ -1,8 +1,8 @@
 package models
 
 import (
-	"go-swan/database"
-	"go-swan/logs"
+	"autobid/database"
+	"autobid/logs"
 )
 
 type OfflineDeals struct {

@@ -1,12 +1,12 @@
 package main
 
 import (
-	"go-swan/common/constants"
-	"go-swan/config"
-	"go-swan/database"
-	"go-swan/logs"
-	"go-swan/routers/commonRouters"
-	"go-swan/service"
+	"autobid/common/constants"
+	"autobid/config"
+	"autobid/database"
+	"autobid/logs"
+	"autobid/routers/commonRouters"
+	"autobid/service"
 	"strconv"
 	"time"
 

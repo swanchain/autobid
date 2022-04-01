@@ -1,9 +1,9 @@
 package models
 
 import (
-	"go-swan/common/constants"
-	"go-swan/database"
-	"go-swan/logs"
+	"autobid/common/constants"
+	"autobid/database"
+	"autobid/logs"
 
 	"github.com/shopspring/decimal"
 )

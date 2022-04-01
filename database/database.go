@@ -1,8 +1,8 @@
 package database
 
 import (
-	"go-swan/config"
-	"go-swan/logs"
+	"autobid/config"
+	"autobid/logs"
 	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"

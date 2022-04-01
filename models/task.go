@@ -1,10 +1,10 @@
 package models
 
 import (
+	"autobid/common/constants"
+	"autobid/database"
+	"autobid/logs"
 	"context"
-	"go-swan/common/constants"
-	"go-swan/database"
-	"go-swan/logs"
 	"strconv"
 	"time"
 
