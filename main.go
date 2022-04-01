@@ -5,7 +5,7 @@ import (
 	"autobid/config"
 	"autobid/database"
 	"autobid/logs"
-	"autobid/routers/commonRouters"
+	commonRouters "autobid/routers/common"
 	"autobid/service"
 	"strconv"
 	"time"
