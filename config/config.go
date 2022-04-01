@@ -25,8 +25,7 @@ type database struct {
 	DbMaxIdleConnNum int    `toml:"db_max_idle_conn_num"`
 }
 type lotus struct {
-	ClientApiUrl      string `toml:"client_api_url"`
-	ClientAccessToken string `toml:"client_access_token"`
+	ClientApiUrl string `toml:"client_api_url"`
 }
 
 var config *Configuration
@@ -73,7 +72,6 @@ func requiredFieldsAreGiven(metaData toml.MetaData) bool {
 		{"database", "db_max_idle_conn_num"},
 
 		{"lotus", "client_api_url"},
-		{"lotus", "client_access_token"},
 	}
 
 	for _, v := range requiredFields {

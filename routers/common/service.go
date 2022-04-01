@@ -1,8 +1,8 @@
 package commonRouters
 
 import (
-	"go-swan/common"
-	"go-swan/models"
+	"autobid/common"
+	"autobid/models"
 	"runtime"
 )
 
