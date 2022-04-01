@@ -58,11 +58,11 @@ func GetAutoBidMiners() ([]*Miner, error) {
 	var notNulCols []string
 	notNulCols = append(notNulCols, "expected_sealing_time")
 	notNulCols = append(notNulCols, "start_epoch")
-	filter := "bid_mode=1 and miner.status=? and offline_deal_available=1"
+	filter := "bid_mode=1 and miner.status=? and offline_deal_available=1 and miner.heartbeat_status=?"
 	for i := range notNulCols {
 		filter = filter + " and " + notNulCols[i] + " is not null"
 	}
-	query := database.GetDB().Joins("JOIN swan_miner on miner.swan_miner_id=swan_miner.id").Where(filter, constants.MINER_STATUS_ACTIVE).Where("swan_miner.status=?", constants.SWAN_MINER_STATUS_ONLINE)
+	query := database.GetDB().Where(filter, constants.MINER_STATUS_ACTIVE, constants.MINER_HEARTBEAT_STATUS_ONLINE)
 	err := query.Find(&miners).Error
 
 	if err != nil {
