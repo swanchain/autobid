@@ -9,3 +9,7 @@ db_username = "root"         # username to access the database
 db_password = ""             # password to access the database
 db_args = "charset=utf8mb4&parseTime=True&loc=Local" # other arguments to access database
 db_max_idle_conn_num = 10    # maximum number of connections in the idle connection pool
+
+[lotus]
+client_api_url = "http://[ip]:[port]/rpc/v0"   # Url of lotus client web api, generally the [port] is 1234
+client_access_token = ""   # Access token of lotus client web api, it should have admin access right

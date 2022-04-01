@@ -1,12 +1,16 @@
 package service
 
 import (
+	"fmt"
 	"go-swan/common/constants"
 	"go-swan/common/utils"
 	"go-swan/config"
 	"go-swan/logs"
 	"go-swan/models"
+	"strconv"
 	"time"
+
+	"github.com/filswan/go-swan-lib/client/lotus"
 )
 
 var miners []*models.Miner = nil
@@ -127,7 +131,17 @@ func FindMiner4OneTask(task *models.Task) *models.Miner {
 	}
 
 	for _, offlineDeal := range offlineDeals {
-		offlineDeal.FileSizeNumer, err = utils.GetFloat64FromStr(offlineDeal.FileSize)
+		if offlineDeal.FileSize == nil || *offlineDeal.FileSize == "" {
+			err := fmt.Errorf("file size is empty, offline deal id:%d", offlineDeal.Id)
+			logs.GetLogger().Error(err)
+			err = models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_ACTION_REQUIRED)
+			if err != nil {
+				logs.GetLogger().Error(err)
+			}
+			return nil
+		}
+
+		offlineDeal.FileSizeNumer, err = strconv.ParseInt(*offlineDeal.FileSize, 10, 64)
 		if err != nil {
 			logs.GetLogger().Error(err)
 			err = models.TaskUpdateStatus(task.Id, constants.TASK_STATUS_ACTION_REQUIRED)
@@ -262,12 +276,12 @@ func IsMinerMatch(miner *models.Miner, task *models.Task, offlineDeals []*models
 		return false
 	}
 
-	if *task.Type == constants.TASK_TYPE_REGULAR && *task.MaxPrice < *miner.Price {
+	if *task.Type == constants.TASK_TYPE_REGULAR && (*task.MaxPrice).Cmp(*miner.Price) < 0 {
 		logs.GetLogger().Info("*task.MaxPrice:", *task.MaxPrice, " < *miner.Price", *miner.Price, " miner:", miner.Id, " task:", task.Id)
 		return false
 	}
 
-	if *task.Type == constants.TASK_TYPE_VERIFIED && *task.MaxPrice < *miner.VerifiedPrice {
+	if *task.Type == constants.TASK_TYPE_VERIFIED && (*task.MaxPrice).Cmp(*miner.VerifiedPrice) < 0 {
 		logs.GetLogger().Info("*task.MaxPrice:", *task.MaxPrice, " < *miner.VerifiedPrice", *miner.VerifiedPrice, " miner:", miner.Id, " task:", task.Id)
 		return false
 	}
@@ -322,16 +336,24 @@ func GetMiners() []*models.Miner {
 		return nil
 	}
 
+	lotusClient, err := lotus.LotusGetClient(config.GetConfig().Lotus.ClientApiUrl, config.GetConfig().Lotus.ClientAccessToken)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil
+	}
+
 	for i, miner := range miners {
-		utils.LotusGetMinerInfo(miner)
-
-		if miner.MinPieceSize != nil {
-			miner.MinPieceSizeByte = utils.GetByteSizeFromStr(*miner.MinPieceSize)
+		logs.GetLogger().Info("getting price for miner:", miner.MinerFid)
+		minerConfig, err := lotusClient.LotusClientQueryAsk(miner.MinerFid)
+		if err != nil {
+			logs.GetLogger().Error(err)
+			return nil
 		}
 
-		if miner.MaxPieceSize != nil {
-			miner.MaxPieceSizeByte = utils.GetByteSizeFromStr(*miner.MaxPieceSize)
-		}
+		miner.MinPieceSizeByte = &minerConfig.MinPieceSize
+		miner.MaxPieceSizeByte = &minerConfig.MaxPieceSize
+		miner.Price = &minerConfig.Price
+		miner.VerifiedPrice = &minerConfig.VerifiedPrice
 
 		if miner.StartEpoch != nil {
 			epochAbs := utils.GetCurrentEpoch() + *miner.StartEpoch + constants.EPOCH_PER_HOUR
